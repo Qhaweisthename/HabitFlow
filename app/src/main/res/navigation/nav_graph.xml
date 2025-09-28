@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/progressFragment">
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.example.habitflow.ProgressFragment"
+        android:label="Progress" />
+
+    <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="com.example.habitflow.RewardsFragment"
+        android:label="Rewards" />
+
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.example.habitflow.TasksFragment"
+        android:label="Tasks" />
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.habitflow.CalendarFragment"
+        android:label="Calendar" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.habitflow.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/addHabitFragment"
+        android:name="com.example.habitflow.AddHabitFragment"
+        android:label="Add Habit" />
+
+</navigation>

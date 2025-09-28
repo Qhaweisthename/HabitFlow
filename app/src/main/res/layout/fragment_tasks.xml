@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <!-- Progress bars row -->
+    <LinearLayout
+        android:orientation="vertical" android:padding="16dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            style="@style/Widget.Material3.LinearProgressIndicator"
+            android:progress="85" android:max="100"
+            android:layout_width="match_parent" android:layout_height="8dp" />
+        <TextView android:text="Experience" android:textSize="12sp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:progress="100" android:max="100"
+            android:layout_width="match_parent" android:layout_height="8dp" />
+        <TextView android:text="Health" android:textSize="12sp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:progress="38" android:max="100"
+            android:layout_width="match_parent" android:layout_height="8dp" />
+        <TextView android:text="Mana" android:textSize="12sp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTasks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:layout_weight="1"/>
+</LinearLayout>
