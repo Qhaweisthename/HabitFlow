@@ -1,59 +1,67 @@
 package com.example.habitflow
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.habitflow.databinding.FragmentCalendarBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CalendarFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CalendarFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentCalendarBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false)
+    ): View {
+        _binding = FragmentCalendarBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
+
+        viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
+            if (tasks.isEmpty()) {
+                binding.tvTasksForDay.text = "No tasks yet."
+                return@observe
+            }
+
+            // Group tasks by date
+            val grouped = tasks.groupBy { it.date }
+            val builder = StringBuilder()
+
+            grouped.forEach { (date, list) ->
+                builder.append("📅 $date\n")
+                list.forEach { task ->
+                    builder.append("   - ${task.name}${if (task.isDone) " ✅" else ""}\n")
+                }
+                builder.append("\n")
+            }
+
+            binding.tvTasksForDay.text = builder.toString()
+        }
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CalendarFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CalendarFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun showTasksForDate(date: String) {
+        val tasks = viewModel.tasks.value?.filter { it.date == date } ?: emptyList()
+        val completed = tasks.count { it.isDone }
+        val total = tasks.size
+
+        binding.tvTasksOnDate.text = if (total == 0) {
+            "No tasks for this date"
+        } else {
+            "Tasks: $completed / $total completed"
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

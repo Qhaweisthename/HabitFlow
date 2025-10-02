@@ -11,4 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="12dp"/>
+
+    <TextView
+        android:id="@+id/tvCoins"
+        android:text="Coins: 300"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

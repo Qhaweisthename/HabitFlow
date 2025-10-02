@@ -1,59 +1,127 @@
 package com.example.habitflow
 
+import android.app.DatePickerDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.habitflow.adapter.TaskAdapter
+import com.example.habitflow.databinding.FragmentTasksBinding
+import com.example.habitflow.model.Task
+import java.text.SimpleDateFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TasksFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TasksFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentTasksBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var taskAdapter: TaskAdapter
+    private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tasks, container, false)
+    ): View {
+        _binding = FragmentTasksBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
+
+        taskAdapter = TaskAdapter(
+            mutableListOf(),
+            onTaskChecked = { task -> viewModel.updateTask(task) },
+            onTaskDeleted = { task -> viewModel.deleteTask(task) }
+        )
+
+        binding.rvTasks.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTasks.adapter = taskAdapter
+
+        // Observe tasks
+        viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
+            taskAdapter.updateTasks(tasks)
+            updateProgressBars(tasks)
+        }
+
+        // Clear all
+        binding.btnClearAll.setOnClickListener {
+            viewModel.clearAll()
+        }
+
+        // ✅ FAB add task with date picker
+        binding.fabAddTask.setOnClickListener {
+            showAddTaskDialog()
+        }
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TasksFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TasksFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun showAddTaskDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_task, null)
+        val etTaskName = dialogView.findViewById<EditText>(R.id.etTaskName)
+        val tvPickedDate = dialogView.findViewById<TextView>(R.id.tvPickedDate)
+
+        var pickedDate = Task.getTodayDate() // default today
+        tvPickedDate.text = pickedDate
+
+        tvPickedDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                requireContext(),
+                { _, year, month, dayOfMonth ->
+                    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                    calendar.set(year, month, dayOfMonth)
+                    pickedDate = format.format(calendar.time)
+                    tvPickedDate.text = pickedDate
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+            datePicker.show()
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("New Task")
+            .setView(dialogView)
+            .setPositiveButton("Add") { _, _ ->
+                val name = etTaskName.text.toString()
+                if (name.isNotBlank()) {
+                    viewModel.addTask(viewModel.newTask(name, pickedDate))
                 }
             }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    fun addTask(name: String) {
+        if (name.isNotBlank()) {
+            viewModel.addTask(viewModel.newTask(name))
+        }
+    }
+
+
+    private fun updateProgressBars(tasks: List<Task>) {
+        if (tasks.isEmpty()) {
+            binding.progressExperience.progress = 0
+            binding.progressHealth.progress = 0
+            binding.progressMana.progress = 0
+            return
+        }
+
+        val completed = tasks.count { it.isDone }
+        val ratio = completed.toFloat() / tasks.size
+
+        binding.progressExperience.progress = (ratio * 100).toInt()
+        binding.progressHealth.progress = (ratio * 80).toInt()
+        binding.progressMana.progress = (ratio * 60).toInt()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

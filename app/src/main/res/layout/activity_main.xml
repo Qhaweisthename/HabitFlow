@@ -10,7 +10,7 @@
         style="@style/Widget.Material3.Toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="Progress"
+        android:title="@string/progress"
         app:navigationIconTint="@android:color/white"
         app:titleCentered="true" />
 
@@ -29,4 +29,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:menu="@menu/menu_bottom_nav" />
+
+    <!-- Floating Action Button lifted above navbar -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabGlobalAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="90dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/purple_500"
+        android:contentDescription="@string/add_task" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

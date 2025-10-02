@@ -10,6 +10,8 @@
     <string name="fab_desc">Add new task</string>
     <string name="sample_date">Monday, Aug 24</string>
     <string name="sample_message">So close. You got this!</string>
+    <string name="progress">Progress</string>
+    <string name="add_task">Add Task</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
