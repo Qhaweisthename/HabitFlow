@@ -13,13 +13,13 @@ import com.example.habitflow.databinding.ActivityItemTaskBinding
 class Item_task : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-private lateinit var binding: ActivityItemTaskBinding
+    private lateinit var binding: ActivityItemTaskBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-     binding = ActivityItemTaskBinding.inflate(layoutInflater)
-     setContentView(binding.root)
+        binding = ActivityItemTaskBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
 

@@ -1,34 +1,325 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollRoot"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="12dp"
-    app:cardBackgroundColor="#B8A8FF"
-    android:layout_marginTop="8dp">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <TextView
-            android:text="Customize Avatar"
-            android:padding="12dp"
+        <!-- Top Profile Block -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProfileHeader"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
 
-        <TextView
-            android:text="Equipment"
-            android:padding="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:contentDescription="@string/content_desc_profile_picture"
+                    android:src="@mipmap/ic_launcher"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+
+                <TextView
+                    android:id="@+id/txtUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="{Username}"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/btnEditProfile"
+                    app:layout_constraintStart_toEndOf="@id/imgProfile"
+                    app:layout_constraintTop_toTopOf="@id/imgProfile"
+                    android:layout_marginStart="12dp" />
+
+                <TextView
+                    android:id="@+id/txtLevel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/level_format"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:layout_constraintEnd_toStartOf="@id/btnEditProfile"
+                    app:layout_constraintStart_toStartOf="@id/txtUsername"
+                    app:layout_constraintTop_toBottomOf="@id/txtUsername"
+                    android:layout_marginTop="2dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditProfile"
+                    style="@style/Widget.Material3.Button.Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/content_desc_edit_profile"
+                    app:icon="@android:drawable/ic_menu_manage"
+                    app:iconPadding="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Profile Section -->
         <TextView
-            android:text="Items"
-            android:padding="12dp"
+            android:id="@+id/labelProfile"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:text="@string/section_profile"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/profileSectionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/section_purple"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCustomizeAvatar"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_customize_avatar" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEquipment"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_equipment" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnItems"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_items" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPetsMounts"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_pets_mounts" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUpgradePremium"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_upgrade" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Skills Section -->
+        <TextView
+            android:id="@+id/labelSkills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:text="@string/section_skills"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/skillsSectionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/section_purple"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAchievements"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_achievements" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUnlockedSkills"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_unlocked_skills" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStats"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_stats" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Privacy Section -->
+        <TextView
+            android:id="@+id/labelPrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:text="@string/section_privacy"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/privacySectionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/section_purple"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditPersonalInfo"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_personal_info" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChangePassword"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_password" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBanking"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_banking" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLocation"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_location" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNotifications"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_notifications" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="40dp"
+                    app:dividerColor="@color/divider_purple" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrivacyPolicy"
+                    style="@style/Widget.Settings.RowButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/row_privacy_policy" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</ScrollView>

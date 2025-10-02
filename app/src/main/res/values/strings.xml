@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">HabitFlow</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -47,4 +48,35 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="content_desc_profile_picture">Profile picture</string>
+    <string name="content_desc_edit_profile">Edit profile</string>
+
+    <!-- Section titles -->
+    <string name="section_profile">Profile</string>
+    <string name="section_skills">Skills</string>
+    <string name="section_privacy">Privacy</string>
+
+    <!-- Profile section rows -->
+    <string name="row_customize_avatar">Customize Avatar</string>
+    <string name="row_equipment">Equipment</string>
+    <string name="row_items">Items</string>
+    <string name="row_pets_mounts">Pets &amp; Mounts</string>
+    <string name="row_upgrade">Upgrade</string>
+
+    <!-- Skills section rows -->
+    <string name="row_achievements">Achievements</string>
+    <string name="row_unlocked_skills">Skils</string>
+    <string name="row_stats">Stats</string>
+
+    <!-- Privacy section rows -->
+    <string name="row_personal_info">Personal Information</string>
+    <string name="row_password">Password Management</string>
+    <string name="row_banking">Banking Information</string>
+    <string name="row_location">Location</string>
+    <string name="row_notifications">Notifications</string>
+    <string name="row_privacy_policy">Privacy Policy</string>
+
+    <!-- Level formatting -->
+    <string name="level_format">Level:</string>
+    <string name="level_sample">Level: 2</string>
 </resources>
