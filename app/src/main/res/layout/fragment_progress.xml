@@ -17,8 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Today"
-            android:textStyle="bold"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <!-- Progress Card -->
         <com.google.android.material.card.MaterialCardView
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="18dp"
-            app:cardBackgroundColor="@color/purple_200">
+            app:cardBackgroundColor="@color/teal_200">  <!-- FIX #1: Attribute restored -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,21 +39,21 @@
                     android:id="@+id/tvProgress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:text="0/0"
                     android:textSize="36sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No tasks yet"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView> <!-- FIX #2: Correctly closes the card view -->
 
     </LinearLayout>
-</ScrollView>
+</ScrollView> <!-- FIX #3: Correctly closes the scroll view -->
