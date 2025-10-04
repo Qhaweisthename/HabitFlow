@@ -54,6 +54,7 @@ class TaskAdapter(
         notifyDataSetChanged()
     }
 
+
     fun clearAll() {
         tasks.clear()
         notifyDataSetChanged()

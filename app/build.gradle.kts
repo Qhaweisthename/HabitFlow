@@ -50,4 +50,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
+    // Retrofit for HTTP requests
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+// Gson converter for JSON parsing
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+// Kotlin coroutines for async calls
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+// Optional: OkHttp logging for debugging
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }

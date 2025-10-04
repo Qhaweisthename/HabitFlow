@@ -24,26 +24,36 @@ class TasksFragment : Fragment() {
     private lateinit var taskAdapter: TaskAdapter
     private lateinit var viewModel: TaskViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
+
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
+
 
         taskAdapter = TaskAdapter(
             mutableListOf(),
             onTaskChecked = { task -> viewModel.updateTask(task) },
             onTaskDeleted = { task -> viewModel.deleteTask(task) }
         )
+        try {
+            viewModel.fetchTasks()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         binding.rvTasks.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTasks.adapter = taskAdapter
 
         // Observe tasks
         viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
-            taskAdapter.updateTasks(tasks)
-            updateProgressBars(tasks)
+            if (tasks != null) {
+                taskAdapter.updateTasks(tasks)
+                updateProgressBars(tasks)
+            }
         }
 
         // Clear all

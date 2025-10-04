@@ -7,7 +7,8 @@ data class Task(
     val id: Int,
     val name: String,
     var isDone: Boolean = false,
-    val date: String = getTodayDate() // default = today
+    val date: String = getTodayDate(),
+    val remoteId: String? = null // MongoDB _id reference
 ) {
     companion object {
         fun getTodayDate(): String {
