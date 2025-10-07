@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Redirect to Register
+
         binding.tvRegisterRedirect.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
