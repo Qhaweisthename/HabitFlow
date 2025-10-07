@@ -17,20 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progressExperience"
-                android:progress="0"
-                android:max="100"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"/>
-
             <TextView
                 android:text="Experience"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progressHealth"
+                android:id="@+id/progressExperience"
                 android:progress="0"
                 android:max="100"
                 android:layout_width="match_parent"
@@ -42,7 +35,7 @@
                 android:layout_height="wrap_content"/>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progressMana"
+                android:id="@+id/progressHealth"
                 android:progress="0"
                 android:max="100"
                 android:layout_width="match_parent"
@@ -52,6 +45,23 @@
                 android:text="Mana"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressMana"
+                android:progress="0"
+                android:max="100"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"/>
+
+
+
+            <!-- Clear All button -->
+            <Button
+                android:id="@+id/btnClearAll"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear All Tasks"/>
         </LinearLayout>
 
         <!-- Task list -->
@@ -60,14 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:padding="16dp"/>
+            android:padding="16dp"
+            android:clipToPadding="false" />
 
-        <!-- Clear All button -->
-        <Button
-            android:id="@+id/btnClearAll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Clear All Tasks"/>
+
     </LinearLayout>
 
     <!-- ✅ Floating Action Button -->

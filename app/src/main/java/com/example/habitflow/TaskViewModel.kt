@@ -40,27 +40,38 @@ class TaskViewModel : ViewModel() {
     fun fetchTasks() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                println("🟢 Fetching tasks from API...")
                 val response = RetrofitInstance.api.getTasks()
                 if (response.isSuccessful) {
                     val apiTasks = response.body() ?: emptyList<ApiTask>()
+                    println("✅ Received ${apiTasks.size} tasks from API.")
                     val mapped = apiTasks.map { it.toUiTask() }.toMutableList()
                     _tasks.postValue(mapped)
+                } else {
+                    println("⚠️ API Error: ${response.code()} - ${response.message()}")
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("🚨 Network or conversion error: ${e.message}")
+                _tasks.postValue(mutableListOf(
+                    Task(id = 1, name = "Sample Task (offline)", isDone = false, date = Task.getTodayDate())
+                ))
+
             }
         }
     }
 
+
     /** --- Create new local Task --- **/
-    fun newTask(name: String, date: String = Task.getTodayDate()): Task {
+    fun newTask(name: String, date: String = Task.getTodayDate(), userEmail: String = "guest@habitflow.com"): Task {
         return Task(
-            id = 0, // not used for Mongo
+            id = 0,
+            userEmail = userEmail,
             name = name,
             isDone = false,
             date = date
         )
     }
+
 
     /** --- Add Task to API and local list --- **/
     fun addTask(task: Task) {
@@ -158,12 +169,14 @@ class TaskViewModel : ViewModel() {
 fun ApiTask.toUiTask(): Task {
     return Task(
         id = 0,
+        userEmail = "guest@habitflow.com", // or get from logged-in user
         name = this.name,
         isDone = this.isDone,
         date = this.date,
         remoteId = this._id
     )
 }
+
 
 // Converts UI Task -> Create API Request
 fun Task.toCreateRequest(): CreateTaskRequest {

@@ -1,4 +1,4 @@
-package com.example.habitflow
+package com.example.habitflow.ui
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -11,11 +11,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.habitflow.R
+import com.example.habitflow.TaskViewModel
 import com.example.habitflow.adapter.TaskAdapter
 import com.example.habitflow.databinding.FragmentTasksBinding
 import com.example.habitflow.model.Task
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class TasksFragment : Fragment() {
     private var _binding: FragmentTasksBinding? = null
@@ -74,7 +77,7 @@ class TasksFragment : Fragment() {
         val etTaskName = dialogView.findViewById<EditText>(R.id.etTaskName)
         val tvPickedDate = dialogView.findViewById<TextView>(R.id.tvPickedDate)
 
-        var pickedDate = Task.getTodayDate() // default today
+        var pickedDate = Task.Companion.getTodayDate() // default today
         tvPickedDate.text = pickedDate
 
         tvPickedDate.setOnClickListener {

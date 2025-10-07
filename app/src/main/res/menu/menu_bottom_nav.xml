@@ -26,9 +26,6 @@
         android:icon="@drawable/settings"
         android:title="Settings" />
 
-    <item
-        android:id="@+id/addHabitFragment"
-        android:icon="@drawable/add"
-        android:title="Add Habit" />
+
 
 </menu>

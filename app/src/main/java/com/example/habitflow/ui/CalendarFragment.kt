@@ -1,4 +1,4 @@
-package com.example.habitflow
+package com.example.habitflow.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.habitflow.TaskViewModel
 import com.example.habitflow.databinding.FragmentCalendarBinding
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CalendarFragment : Fragment() {
     private var _binding: FragmentCalendarBinding? = null

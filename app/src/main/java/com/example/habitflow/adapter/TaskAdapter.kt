@@ -53,8 +53,7 @@ class TaskAdapter(
         tasks.addAll(newTasks)
         notifyDataSetChanged()
     }
-
-
+     
     fun clearAll() {
         tasks.clear()
         notifyDataSetChanged()

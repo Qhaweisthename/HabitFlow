@@ -1,4 +1,4 @@
-package com.example.habitflow
+package com.example.habitflow.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.habitflow.TaskViewModel
 import com.example.habitflow.adapter.RewardAdapter
 import com.example.habitflow.databinding.FragmentRewardsBinding
 import com.example.habitflow.model.Reward
@@ -19,12 +20,15 @@ class RewardsFragment : Fragment() {
     private lateinit var viewModel: TaskViewModel
     private lateinit var rewardAdapter: RewardAdapter
 
+    private val userEmail = "guest@habitflow.com" // later replace with logged-in user
+
     private val rewards = mutableListOf(
-        Reward(1, "5 min Break", 50),
-        Reward(2, "Watch a Video", 100),
-        Reward(3, "Snack Time", 150),
-        Reward(4, "Play Game 15 min", 200)
+        Reward(id = 1, userEmail = userEmail, name = "5 min Break", cost = 50),
+        Reward(id = 2, userEmail = userEmail, name = "Watch a Video", cost = 100),
+        Reward(id = 3, userEmail = userEmail, name = "Snack Time", cost = 150),
+        Reward(id = 4, userEmail = userEmail, name = "Play Game 15 min", cost = 200)
     )
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,12 +38,9 @@ class RewardsFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
 
         binding.rvRewards.layoutManager = LinearLayoutManager(requireContext())
-        rewardAdapter = RewardAdapter(rewards) { reward ->
-            claimReward(reward)
-        }
+        rewardAdapter = RewardAdapter(rewards) { reward -> claimReward(reward) }
         binding.rvRewards.adapter = rewardAdapter
 
-        // ✅ Observe coins in real-time
         viewModel.coins.observe(viewLifecycleOwner) { coins ->
             binding.tvCoins.text = "Coins: $coins"
         }
