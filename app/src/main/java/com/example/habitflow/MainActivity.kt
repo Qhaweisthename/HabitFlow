@@ -10,9 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavOptions
 import androidx.navigation.ui.setupWithNavController
-import com.example.habitflow.model.Task
+import com.example.habitflow.data.model.Task
 import com.example.habitflow.ui.LoginActivity
+import com.example.habitflow.ui.tasks.TaskViewModel
 import com.example.habitflow.util.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -50,8 +52,28 @@ class MainActivity : AppCompatActivity() {
         navController = host.navController
         bottomNav.setupWithNavController(navController)
 
+        // Force navigation to the selected top-level destination from anywhere
+        bottomNav.setOnItemSelectedListener { item ->
+            val options = NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setRestoreState(true)
+                .setPopUpTo(navController.graph.startDestinationId, false, saveState = true)
+                .build()
+            return@setOnItemSelectedListener try {
+                navController.navigate(item.itemId, null, options)
+                true
+            } catch (_: IllegalArgumentException) {
+                false
+            }
+        }
+
+        // If reselected, pop back to that destination (clears nested stack under it)
+        bottomNav.setOnItemReselectedListener { menuItem ->
+            navController.popBackStack(menuItem.itemId, false)
+        }
+
         // ✅ Display Welcome Text
-        topBar.title = "Welcome, ${userSession ?: "User"}"
+        //topBar.title = "Welcome, ${userSession ?: "User"}"
 
         // ✅ Inflate Logout Menu
         topBar.inflateMenu(R.menu.menu_top_appbar)
@@ -123,4 +145,5 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 }

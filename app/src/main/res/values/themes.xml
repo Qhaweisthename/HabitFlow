@@ -6,6 +6,20 @@
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
+    <!-- Row button style used in fragment_settings.xml -->
+    <style name="Widget.Settings.RowButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:insetRight">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">40dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <!-- Keep background transparent so the section color shows through -->
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@android:color/white</item>
+        <item name="android:gravity">start|center_vertical</item>
+    </style>
+
     <!-- Final app theme -->
     <style name="Theme.HabitFlow" parent="Base.Theme.HabitFlow" />
 
