@@ -1,37 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <!-- Progress bars row -->
     <LinearLayout
-        android:orientation="vertical" android:padding="16dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            style="@style/Widget.Material3.LinearProgressIndicator"
-            android:progress="85" android:max="100"
-            android:layout_width="match_parent" android:layout_height="8dp" />
-        <TextView android:text="Experience" android:textSize="12sp"
-            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+        <!-- Progress bars -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:progress="100" android:max="100"
-            android:layout_width="match_parent" android:layout_height="8dp" />
-        <TextView android:text="Health" android:textSize="12sp"
-            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <TextView
+                android:text="Experience"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:progress="38" android:max="100"
-            android:layout_width="match_parent" android:layout_height="8dp" />
-        <TextView android:text="Mana" android:textSize="12sp"
-            android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressExperience"
+                android:progress="0"
+                android:max="100"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"/>
+
+            <TextView
+                android:text="Health"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressHealth"
+                android:progress="0"
+                android:max="100"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"/>
+
+            <TextView
+                android:text="Mana"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressMana"
+                android:progress="0"
+                android:max="100"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"/>
+
+
+
+            <!-- Clear All button -->
+            <Button
+                android:id="@+id/btnClearAll"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear All Tasks"/>
+        </LinearLayout>
+
+        <!-- Task list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTasks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:clipToPadding="false" />
+
+
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTasks"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        android:layout_weight="1"/>
-</LinearLayout>
+    <!-- ✅ Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/purple_500"
+        android:contentDescription="Add Task"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
