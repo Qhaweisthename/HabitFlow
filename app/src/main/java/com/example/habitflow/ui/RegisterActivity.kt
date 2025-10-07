@@ -2,17 +2,16 @@ package com.example.habitflow.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
-import com.example.habitflow.MainActivity
 import com.example.habitflow.data.AppDatabase
 import com.example.habitflow.data.User
 import com.example.habitflow.databinding.ActivityRegisterBinding
 import com.example.habitflow.repository.UserRepository
 import kotlinx.coroutines.launch
-import com.example.habitflow.ui.progress.PlayerProgress
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -24,16 +23,16 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ✅ Initialize Room database correctly
+        // ✅ Initialize Room database
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "habitflow_db"
         )
-            .fallbackToDestructiveMigration() // allows rebuild when schema changes
-            .build() // ✅ this must be called at the end
+            .fallbackToDestructiveMigration()
+            .build()
 
-        repository = UserRepository(db.userDao()) // ✅ Now this works
+        repository = UserRepository(db.userDao())
 
         // ✅ Register button click
         binding.btnRegister.setOnClickListener {
@@ -41,34 +40,55 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // 🔹 Input validation
+            when {
+                name.isEmpty() || email.isEmpty() || password.isEmpty() -> {
+                    showToast("Please fill in all fields")
+                    return@setOnClickListener
+                }
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                    showToast("Enter a valid email address")
+                    return@setOnClickListener
+                }
+                password.length < 6 -> {
+                    showToast("Password must be at least 6 characters")
+                    return@setOnClickListener
+                }
+                else -> {
+                    lifecycleScope.launch {
+                        val existingUser = repository.getUserByEmail(email)
+                        if (existingUser != null) {
+                            runOnUiThread {
+                                showToast("Email already registered. Please log in.")
+                            }
+                        } else {
+                            val newUser = User(
+                                id = 0,
+                                name = name,
+                                email = email,
+                                password = password
+                            )
 
-            val newUser = User(
-                id = 0,
-                name = name,
-                email = email,
-                password = password
-            )
-
-            lifecycleScope.launch {
-                repository.register(newUser)
-                // Reset progress for new users so they start at level 0 and 0 XP
-                PlayerProgress.get(this@RegisterActivity).reset()
-                runOnUiThread {
-                    Toast.makeText(this@RegisterActivity, "Registration successful!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
-                    finish()
+                            repository.register(newUser)
+                            runOnUiThread {
+                                showToast("Registration successful!")
+                                startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                                finish()
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        // ✅ Already have an account → go back to login
+        // ✅ Redirect to Login
         binding.tvLoginRedirect.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

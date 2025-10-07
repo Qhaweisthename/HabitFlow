@@ -2,6 +2,7 @@ package com.example.habitflow.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -30,14 +31,13 @@ class LoginActivity : AppCompatActivity() {
             AppDatabase::class.java,
             "habitflow_db"
         )
-            .fallbackToDestructiveMigration() // allows automatic rebuild if schema changes
-            .build() // ✅ This must be here to create an actual DB instance
+            .fallbackToDestructiveMigration()
+            .build()
 
-        // ✅ Repository and session
         repository = UserRepository(db.userDao())
         sessionManager = SessionManager(this)
 
-        // ✅ If session already exists, go straight to MainActivity
+        // ✅ Auto-login if session exists
         sessionManager.getUserSession()?.let {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
@@ -48,34 +48,47 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            lifecycleScope.launch {
-                val user = repository.login(email, password)
-                runOnUiThread {
-                    if (user != null) {
-                        // ✅ Save session
-                        sessionManager.saveUserSession(email)
-                        Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
-
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        Toast.makeText(this@LoginActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
+            // 🔹 Validation checks
+            when {
+                email.isEmpty() || password.isEmpty() -> {
+                    showToast("Please fill in all fields")
+                    return@setOnClickListener
+                }
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                    showToast("Enter a valid email address")
+                    return@setOnClickListener
+                }
+                password.length < 6 -> {
+                    showToast("Password must be at least 6 characters")
+                    return@setOnClickListener
+                }
+                else -> {
+                    lifecycleScope.launch {
+                        val user = repository.login(email, password)
+                        runOnUiThread {
+                            if (user != null) {
+                                sessionManager.saveUserSession(email)
+                                showToast("Login successful!")
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                showToast("Invalid email or password")
+                            }
+                        }
                     }
                 }
             }
         }
 
-        // ✅ Redirect to Register page
+        // ✅ Redirect to Register
         binding.tvRegisterRedirect.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
