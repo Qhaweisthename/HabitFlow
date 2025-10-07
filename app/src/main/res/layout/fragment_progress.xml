@@ -16,7 +16,7 @@
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sample_date"
+            android:text="Today"
             android:textStyle="bold"
             android:textSize="22sp" />
 
@@ -34,12 +34,12 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <!-- Circular progress placeholder -->
+                <!-- ✅ This will show total completed tasks -->
                 <TextView
                     android:id="@+id/tvProgress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3/4"
+                    android:text="0/0"
                     android:textSize="36sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -48,7 +48,7 @@
                     android:id="@+id/tvMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sample_message"
+                    android:text="No tasks yet"
                     android:textSize="14sp"
                     android:textColor="@android:color/black" />
 
