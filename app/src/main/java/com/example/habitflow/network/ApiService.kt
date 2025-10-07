@@ -1,8 +1,8 @@
 package com.example.habitflow.network
 
-import com.example.habitflow.ApiTask
-import com.example.habitflow.CreateTaskRequest
-import com.example.habitflow.UpdateTaskRequest
+import com.example.habitflow.ui.tasks.ApiTask
+import com.example.habitflow.ui.tasks.CreateTaskRequest
+import com.example.habitflow.ui.tasks.UpdateTaskRequest
 import retrofit2.Response
 import retrofit2.http.*
 

@@ -12,6 +12,7 @@ import com.example.habitflow.data.User
 import com.example.habitflow.databinding.ActivityRegisterBinding
 import com.example.habitflow.repository.UserRepository
 import kotlinx.coroutines.launch
+import com.example.habitflow.ui.progress.PlayerProgress
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -54,6 +55,8 @@ class RegisterActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 repository.register(newUser)
+                // Reset progress for new users so they start at level 0 and 0 XP
+                PlayerProgress.get(this@RegisterActivity).reset()
                 runOnUiThread {
                     Toast.makeText(this@RegisterActivity, "Registration successful!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))

@@ -3,7 +3,7 @@ package com.example.habitflow.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.habitflow.model.Reward
+import com.example.habitflow.data.model.Reward
 
 @Dao
 interface RewardDao {
