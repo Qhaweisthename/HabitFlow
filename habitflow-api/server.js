@@ -12,7 +12,7 @@ app.use(express.json());
 // ✅ Connect to MongoDB
 mongoose
   .connect(
-    "mongodb+srv://user_insy7314:NfETjaixGWIytqYJ@cluster0.wbvqneq.mongodb.net/habitflow"
+    "mongodb+srv://user_insy7314:btbwvHClveR3f5pw@cluster0.wbvqneq.mongodb.net/habitflow"
   )
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
