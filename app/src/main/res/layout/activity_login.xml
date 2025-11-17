@@ -106,7 +106,7 @@
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Continue with Google"
+        android:text="@string/google_sign_in"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         android:backgroundTint="@color/white"
@@ -117,23 +117,27 @@
         app:cornerRadius="12dp"
         app:layout_constraintTop_toBottomOf="@id/btnLogin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@android:color/white"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/purple_500" />
 
-    <!-- Biometric Login Button -->
-    <Button
+    <!-- Biometric Login Icon Button -->
+    <ImageButton
         android:id="@+id/btnBiometricLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Unlock with biometrics"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/purple_500"
-        android:padding="12dp"
-        android:layout_marginTop="16dp"
-        app:cornerRadius="12dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:contentDescription="@string/biometric_login"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        app:srcCompat="@drawable/ic_fingerprint_24px"
+        app:tint="@color/purple_500"
         app:layout_constraintTop_toBottomOf="@id/btnGoogleSignIn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Redirect to Register -->
     <TextView

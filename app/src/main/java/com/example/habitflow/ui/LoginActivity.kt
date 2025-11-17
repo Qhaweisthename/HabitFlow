@@ -129,7 +129,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // GOOGLE SIGN-IN
+    // Google Sign-In + Firebase
+
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(com.example.habitflow.R.string.default_web_client_id))
@@ -186,7 +187,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // BIOMETRICS
+    // Biometrics
+
     private fun setupBiometrics() {
         val biometricManager = BiometricManager.from(this)
         val canAuth = biometricManager.canAuthenticate(
@@ -230,7 +232,10 @@ class LoginActivity : AppCompatActivity() {
                         BiometricManager.Authenticators.DEVICE_CREDENTIAL
             )
             .build()
+
     }
+
+    // Helpers
 
     private fun goToMain() {
         showToast("Login successful!")
