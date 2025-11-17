@@ -5,118 +5,125 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/tasksFragment">
 
+    <!-- MAIN BOTTOM NAV DESTINATIONS -->
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.example.habitflow.ui.tasks.TasksFragment"
-        android:label="Tasks"
+        android:label="@string/tasks"
         tools:layout="@layout/fragment_tasks" />
 
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.habitflow.ui.calendar.CalendarFragment"
-        android:label="Calendar"
+        android:label="@string/calendar"
         tools:layout="@layout/fragment_calendar" />
 
     <fragment
         android:id="@+id/rewardsFragment"
         android:name="com.example.habitflow.ui.rewards.RewardsFragment"
-        android:label="Rewards"
+        android:label="@string/rewards"
         tools:layout="@layout/fragment_rewards" />
 
     <fragment
         android:id="@+id/progressFragment"
         android:name="com.example.habitflow.ui.progress.ProgressFragment"
-        android:label="Progress"
+        android:label="@string/progress"
         tools:layout="@layout/fragment_progress" />
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.habitflow.ui.settings.SettingsFragment"
-        android:label="Settings"
+        android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
 
-    <!-- Settings sub-page destinations -->
+
+    <!-- SETTINGS SUB PAGES -->
+
     <fragment
         android:id="@+id/customizeAvatarFragment"
         android:name="com.example.habitflow.ui.settings.CustomizeAvatarFragment"
-        android:label="Customize Avatar"
+        android:label="@string/row_customize_avatar"
         tools:layout="@layout/fragment_customize_avatar" />
 
     <fragment
         android:id="@+id/equipmentFragment"
         android:name="com.example.habitflow.ui.settings.EquipmentFragment"
-        android:label="Equipment"
+        android:label="@string/row_equipment"
         tools:layout="@layout/fragment_equipment" />
 
     <fragment
         android:id="@+id/itemsFragment"
         android:name="com.example.habitflow.ui.settings.ItemsFragment"
-        android:label="Items"
+        android:label="@string/row_items"
         tools:layout="@layout/fragment_items" />
 
     <fragment
         android:id="@+id/petsMountsFragment"
         android:name="com.example.habitflow.ui.settings.PetsMountsFragment"
-        android:label="Pets &amp; Mounts"
+        android:label="@string/row_pets_mounts"
         tools:layout="@layout/fragment_pets_mounts" />
 
     <fragment
         android:id="@+id/upgradePremiumFragment"
         android:name="com.example.habitflow.ui.settings.UpgradePremiumFragment"
-        android:label="Upgrade"
+        android:label="@string/row_upgrade"
         tools:layout="@layout/fragment_upgrade_premium" />
 
     <fragment
         android:id="@+id/achievementsFragment"
         android:name="com.example.habitflow.ui.settings.achievements.AchievementsFragment"
-        android:label="Achievements"
+        android:label="@string/row_achievements"
         tools:layout="@layout/fragment_achievements" />
 
     <fragment
         android:id="@+id/unlockedSkillsFragment"
         android:name="com.example.habitflow.ui.settings.skills.UnlockedSkillsFragment"
-        android:label="Unlocked Skills"
+        android:label="@string/row_unlocked_skills"
         tools:layout="@layout/fragment_unlocked_skills" />
 
     <fragment
         android:id="@+id/statsFragment"
         android:name="com.example.habitflow.ui.settings.StatsFragment"
-        android:label="Stats"
+        android:label="@string/row_stats"
         tools:layout="@layout/fragment_stats" />
+
+
+    <!-- PRIVACY SETTINGS PAGES -->
 
     <fragment
         android:id="@+id/personalInfoFragment"
         android:name="com.example.habitflow.ui.settings.PersonalInfoFragment"
-        android:label="Personal Information"
+        android:label="@string/row_personal_info"
         tools:layout="@layout/fragment_personal_info" />
 
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.example.habitflow.ui.settings.ChangePasswordFragment"
-        android:label="Change Password"
+        android:label="@string/row_password"
         tools:layout="@layout/fragment_change_password" />
 
     <fragment
         android:id="@+id/bankingFragment"
         android:name="com.example.habitflow.ui.settings.banking.BankingFragment"
-        android:label="Banking"
+        android:label="@string/row_banking"
         tools:layout="@layout/fragment_banking" />
 
     <fragment
         android:id="@+id/locationFragment"
         android:name="com.example.habitflow.ui.settings.LocationFragment"
-        android:label="Location"
+        android:label="@string/row_location"
         tools:layout="@layout/fragment_location" />
 
     <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.example.habitflow.ui.settings.NotificationsFragment"
-        android:label="Notifications"
+        android:label="@string/row_notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/privacyPolicyFragment"
         android:name="com.example.habitflow.ui.settings.PrivacyPolicyFragment"
-        android:label="Privacy Policy"
+        android:label="@string/row_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
+
 </navigation>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HabitFlow</string>
+
+    <string name="progress">Vordering</string>
+    <string name="rewards">Belonings</string>
+    <string name="tasks">Take</string>
+    <string name="calendar">Kalender</string>
+    <string name="settings">Instellings</string>
+
+    <string name="fab_desc">Voeg nuwe taak by</string>
+
+    <string name="section_profile">Profiel</string>
+    <string name="section_skills">Vaardighede</string>
+    <string name="section_privacy">Privaatheid</string>
+
+    <string name="row_achievements">Prestasies</string>
+    <string name="row_unlocked_skills">Vaardighede</string>
+    <string name="row_stats">Statistiek</string>
+    <string name="row_personal_info">Persoonlike inligting</string>
+    <string name="row_password">Wagwoordbestuur</string>
+    <string name="row_banking">Bankinligting</string>
+    <string name="row_location">Ligging</string>
+    <string name="row_notifications">Kennisgewings</string>
+    <string name="row_privacy_policy">Privaatheidsbeleid</string>
+
+    <string name="logout">Teken uit</string>
+    <string name="label_language">Taal van die program</string>
+    <string name="lang_english">Engels</string>
+    <string name="lang_afrikaans">Afrikaans</string>
+    <string name="lang_zulu">Zoeloe</string>
+    <string name="choose_language">Kies \'n taal</string>
+
+    <string name="progress_today">Vandag</string>
+    <string name="progress_message_empty">Geen take op die oomblik nie</string>
+    <string name="progress_message">Hou aan, jy maak vordering!</string>
+
+    <string name="tasks_clear_all">Vee alle take uit</string>
+    <string name="label_experience">Ervaring</string>
+    <string name="label_health">Gesondheid</string>
+    <string name="label_mana">Mana</string>
+
+    <string name="calendar_tasks_placeholder">Take sal hier wys</string>
+    <string name="calendar_hint_select_date">Kies \'n datum om take te sien</string>
+
+    <string name="rewards_coins_label">Munte: %1$d</string>
+    <string name="rewards_coins_sample">Munte: 100</string>
+</resources>

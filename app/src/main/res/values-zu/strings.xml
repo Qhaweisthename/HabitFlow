@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HabitFlow</string>
+
+    <!-- Bottom nav titles -->
+    <string name="progress">Inqubekela phambili</string>
+    <string name="rewards">Imivuzo</string>
+    <string name="tasks">Imisebenzi</string>
+    <string name="calendar">Ikhalenda</string>
+    <string name="settings">Izilungiselelo</string>
+
+    <!-- FAB -->
+    <string name="fab_desc">Engeza umsebenzi omusha</string>
+
+    <!-- Settings headings -->
+    <string name="section_profile">Iphrofayela</string>
+    <string name="section_skills">Amakhono</string>
+    <string name="section_privacy">Ubumfihlo</string>
+
+    <!-- Settings rows -->
+    <string name="row_achievements">Imiphumela</string>
+    <string name="row_unlocked_skills">Amakhono</string>
+    <string name="row_stats">Izibalo</string>
+    <string name="row_personal_info">Ulwazi lomuntu siqu</string>
+    <string name="row_password">Ukuphatha iphasiwedi</string>
+    <string name="row_banking">Ulwazi lwebhange</string>
+    <string name="row_location">Indawo</string>
+    <string name="row_notifications">Izaziso</string>
+    <string name="row_privacy_policy">Inqubomgomo yobumfihlo</string>
+
+    <!-- Logout & language -->
+    <string name="logout">Phuma ku akhawunti</string>
+    <string name="label_language">Ulimi lohlelo</string>
+    <string name="lang_english">IsiNgisi</string>
+    <string name="lang_afrikaans">IsiBhunu</string>
+    <string name="lang_zulu">IsiZulu</string>
+    <string name="choose_language">Khetha ulimi</string>
+
+    <!-- Progress -->
+    <string name="progress_today">Namuhla</string>
+    <string name="progress_message_empty">Ayikho imisebenzi okwamanje</string>
+    <string name="progress_message">Qhubeka, wenza inqubekela phambili!</string>
+
+    <!-- Tasks -->
+    <string name="tasks_clear_all">Susa yonke imisebenzi</string>
+    <string name="label_experience">Ulwazi</string>
+    <string name="label_health">Impilo</string>
+    <string name="label_mana">Amandla</string>
+
+    <!-- Calendar -->
+    <string name="calendar_tasks_placeholder">Imisebenzi izovela lapha</string>
+    <string name="calendar_hint_select_date">Khetha usuku ukubona imisebenzi</string>
+
+    <!-- Rewards -->
+    <string name="rewards_coins_label">Amakhoyini: %1$d</string>
+</resources>

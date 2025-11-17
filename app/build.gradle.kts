@@ -1,7 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    // KSP for Room
     id("com.google.devtools.ksp") version "2.0.21-1.0.25"
+
+    // Firebase + Google services
     id("com.google.gms.google-services")
 }
 
@@ -40,6 +44,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // 🔥 Prevents locale crash on Afrikaans devices
+    packaging {
+        resources {
+            excludes += "/values-af/values-af.xml"
+        }
+    }
 }
 
 dependencies {
@@ -48,39 +59,42 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // ✅ Room Database (KSP-compatible)
+    // Room + KSP
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
     ksp("androidx.room:room-compiler:2.6.1")
 
-    // Lifecycle KTX (gives you viewModelScope & lifecycleScope)
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-process:2.8.6")
 
-    // ✅ Retrofit + Coroutines
+    // Retrofit + Coroutines
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // ✅ Firebase (for Google SSO)
+    // Firebase BOM (choose versions automatically)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-auth-ktx")
 
-    // ✅ Google Sign-In
+    // Core Firebase you are using
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+
+    // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-    // ✅ Biometrics
+    // Biometric authentication
     implementation("androidx.biometric:biometric:1.1.0")
 
-    // ✅ Testing
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
