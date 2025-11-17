@@ -48,40 +48,42 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Navigation (keep only one set)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // ✅ Room Database (KSP-compatible)
+    // Room Database + KSP
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
-    implementation(libs.firebase.common.ktx)
     ksp("androidx.room:room-compiler:2.6.1")
 
-    // Lifecycle KTX (gives you viewModelScope & lifecycleScope)
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
     implementation("androidx.lifecycle:lifecycle-process:2.8.6")
 
-    // ✅ Retrofit + Coroutines
+    // Retrofit + Coroutines
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // ✅ Firebase (for Google SSO)
+    // Firebase (SSO Friendly)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
+    // Uncomment if needed:
+    // implementation("com.google.firebase:firebase-firestore-ktx")
+    // implementation("com.google.firebase:firebase-analytics-ktx")
 
-    // ✅ Google Sign-In
+    // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-    // ✅ Biometrics
+    // Biometrics
     implementation("androidx.biometric:biometric:1.1.0")
 
-    // ✅ Testing
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
