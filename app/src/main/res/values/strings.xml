@@ -121,4 +121,6 @@
         8. Contact Us\n
         - For privacy questions or requests, contact: support@habitflow.example\n
     </string>
+    <string name="biometric_login">Unlock with biometrics</string>
+    <string name="google_sign_in">Continue with Google</string>
 </resources>

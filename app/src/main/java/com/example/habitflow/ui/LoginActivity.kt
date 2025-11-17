@@ -148,9 +148,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // Google Sign-In + Firebase
-    // ─────────────────────────────────────────────────────────────────────────────
 
     private fun setupGoogleSignIn() {
         @Suppress("DEPRECATION") // ok for now
@@ -232,9 +230,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // Biometrics
-    // ─────────────────────────────────────────────────────────────────────────────
 
     private fun setupBiometrics() {
         val biometricManager = BiometricManager.from(this)
@@ -289,13 +285,9 @@ class LoginActivity : AppCompatActivity() {
             )
             .build()
 
-        // ❌ Removed the auto-prompt here so user isn't forced into biometrics on open.
-        //    They only see the dialog after tapping the biometric button.
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
     // Helpers
-    // ─────────────────────────────────────────────────────────────────────────────
 
     private fun goToMain() {
         showToast("Login successful!")
