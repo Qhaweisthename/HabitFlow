@@ -80,7 +80,8 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 🔹 NEW: LANGUAGE SECTION (added, everything else unchanged) -->
+
+        <!-- 🔹 LANGUAGE HEADER -->
         <TextView
             android:id="@+id/labelLanguage"
             android:layout_width="match_parent"
@@ -90,6 +91,16 @@
             android:text="@string/label_language"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="@color/text_dark" />
+
+        <!-- 🔥 ADD THIS BUTTON → Matches Kotlin (btnLanguage) -->
+        <Button
+            android:id="@+id/btnLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_language"
+            android:backgroundTint="@color/section_purple"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="8dp" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardLanguage"
@@ -120,6 +131,10 @@
                     android:textColor="@color/text_dark" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Sections BELOW Left UNCHANGED -->
+        ...
+
         <!-- 🔹 END NEW LANGUAGE SECTION -->
 
         <!-- Profile Section -->

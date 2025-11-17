@@ -40,6 +40,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // 🔥 THIS FIXES YOUR RESOURCE CRASHES
+    packaging {
+        resources {
+            excludes += "/values-af/values-af.xml"
+        }
+    }
 }
 
 dependencies {
@@ -49,11 +56,11 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Navigation (keep only one set)
+    // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Room Database + KSP
+    // Room + KSP
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
@@ -70,17 +77,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // Firebase (SSO Friendly)
+    // Firebase (Auth only)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
-    // Uncomment if needed:
-    // implementation("com.google.firebase:firebase-firestore-ktx")
-    // implementation("com.google.firebase:firebase-analytics-ktx")
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-    // Biometrics
+    // Biometrics login
     implementation("androidx.biometric:biometric:1.1.0")
 
     // Testing

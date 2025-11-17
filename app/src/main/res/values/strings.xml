@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+
     <string name="app_name">HabitFlow</string>
 
     <!-- Old demo stuff / navigation helper -->
@@ -94,7 +96,7 @@
     <string name="rewards_coins_label">Coins: %1$d</string>
     <string name="rewards_coins_sample">Coins: 100</string>
 
-    <!-- Privacy Policy (kept short to avoid issues in translations) -->
+    <!-- Privacy Policy -->
     <string name="privacy_policy_title">Privacy Policy</string>
     <string name="privacy_policy_last_updated">Last updated: 07 Oct 2025</string>
     <string name="privacy_policy_text">
@@ -102,4 +104,5 @@
         when you use the app. Your data is used to provide task tracking, rewards and progress
         features and to improve the stability and security of the app.
     </string>
+
 </resources>
