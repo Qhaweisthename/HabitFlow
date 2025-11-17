@@ -40,7 +40,6 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            // 🔹 Input validation
             when {
                 name.isEmpty() || email.isEmpty() || password.isEmpty() -> {
                     showToast("Please fill in all fields")

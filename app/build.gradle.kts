@@ -1,13 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    // ✅ Match your Kotlin version 2.0.21
     id("com.google.devtools.ksp") version "2.0.21-1.0.25"
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.habitflow"
-    compileSdk = 36   // ✅ required by androidx.core:1.17.0 and activity-ktx:1.10.1
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.habitflow"
@@ -54,6 +54,9 @@ dependencies {
     // ✅ Room Database (KSP-compatible)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.firebase.common.ktx)
     ksp("androidx.room:room-compiler:2.6.1")
 
     // Lifecycle KTX (gives you viewModelScope & lifecycleScope)
@@ -67,6 +70,16 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // ✅ Firebase (for Google SSO)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    // ✅ Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+
+    // ✅ Biometrics
+    implementation("androidx.biometric:biometric:1.1.0")
 
     // ✅ Testing
     testImplementation(libs.junit)
