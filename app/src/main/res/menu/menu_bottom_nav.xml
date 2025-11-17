@@ -4,28 +4,26 @@
     <item
         android:id="@+id/progressFragment"
         android:icon="@drawable/progress"
-        android:title="Progress" />
+        android:title="@string/progress" />
 
     <item
         android:id="@+id/rewardsFragment"
         android:icon="@drawable/rewards"
-        android:title="Rewards" />
+        android:title="@string/rewards" />
 
     <item
         android:id="@+id/tasksFragment"
         android:icon="@drawable/tasks"
-        android:title="Tasks" />
+        android:title="@string/tasks" />
 
     <item
         android:id="@+id/calendarFragment"
         android:icon="@drawable/calendar"
-        android:title="Calendar" />
+        android:title="@string/calendar" />
 
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/settings"
-        android:title="Settings" />
-
-
+        android:title="@string/settings" />
 
 </menu>
