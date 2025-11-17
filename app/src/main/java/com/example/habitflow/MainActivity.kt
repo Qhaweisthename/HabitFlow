@@ -12,12 +12,18 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.NavOptions
 import androidx.navigation.ui.setupWithNavController
+import com.example.habitflow.data.TaskDao
 import com.example.habitflow.data.model.Task
+import com.example.habitflow.network.RetrofitInstance.api
+//import com.example.habitflow.repository.TaskRepository
 import com.example.habitflow.ui.LoginActivity
 import com.example.habitflow.ui.tasks.TaskViewModel
 import com.example.habitflow.util.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -29,6 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            TaskRepository(api, TaskDao, this@MainActivity).syncPending()
+//        }
+
 
         // ✅ Initialize session and check login
         sessionManager = SessionManager(this)
@@ -129,6 +140,7 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 
     // ✅ Logout Confirmation Dialog
     fun showLogoutConfirmation() {

@@ -22,8 +22,13 @@ import com.example.habitflow.R
 import com.example.habitflow.achievements.AchievementsRewards
 import com.example.habitflow.achievements.AchievementsStore
 import com.example.habitflow.data.AppDatabase
+import com.example.habitflow.data.TaskDao
+import com.example.habitflow.data.model.Task
 import com.example.habitflow.databinding.FragmentTasksBinding
+import com.example.habitflow.network.RetrofitInstance
+import com.example.habitflow.repository.TaskRepository
 import com.example.habitflow.ui.tasks.adapter.TaskAdapter
+import com.example.habitflow.util.NetworkUtils
 import com.example.habitflow.util.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -220,8 +225,15 @@ data class UpdateTaskRequest(
 )
 
 class TaskViewModel : ViewModel() {
-    private val _tasks = MutableLiveData<MutableList<com.example.habitflow.data.model.Task>>(mutableListOf())
-    val tasks: LiveData<MutableList<com.example.habitflow.data.model.Task>> get() = _tasks
+
+    private val appContext = com.example.habitflow.App.instance.applicationContext
+    private val repo = TaskRepository(
+        appContext,
+        RetrofitInstance.api
+    )
+
+    private val _tasks = MutableLiveData<MutableList<Task>>(mutableListOf())
+    val tasks: LiveData<MutableList<Task>> get() = _tasks
 
     private val _coins = MutableLiveData(300)
     val coins: LiveData<Int> get() = _coins
@@ -229,32 +241,37 @@ class TaskViewModel : ViewModel() {
     /** --- Fetch tasks from API --- **/
     fun fetchTasks() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                println("🟢 Fetching tasks from API...")
-                val response = com.example.habitflow.network.RetrofitInstance.api.getTasks()
-                if (response.isSuccessful) {
-                    val apiTasks = response.body() ?: emptyList<ApiTask>()
-                    println("✅ Received ${apiTasks.size} tasks from API.")
-                    val mapped = apiTasks.map { it.toUiTask() }.toMutableList()
-                    _tasks.postValue(mapped)
-                } else {
-                    println("⚠️ API Error: ${response.code()} - ${response.message()}")
-                }
-            } catch (e: Exception) {
-                println("🚨 Network or conversion error: ${e.message}")
-                _tasks.postValue(
-                    mutableListOf(
-                        com.example.habitflow.data.model.Task(
-                            id = 1,
-                            name = "Sample Task (offline)",
-                            isDone = false,
-                            date = com.example.habitflow.data.model.Task.getTodayDate()
-                        )
-                    )
-                )
+
+            val email = "guest@habitflow.com"
+
+            if (NetworkUtils.isOnline(appContext)) {
+                try {
+                    val response = RetrofitInstance.api.getTasks()
+
+                    if (response.isSuccessful && response.body() != null) {
+                        val apiTasks = response.body()!!.map { it.toUiTask() }
+
+                        // 1️⃣ Sync unsynced local tasks to API
+                        repo.syncPending()
+
+                        // 2️⃣ Merge downloaded tasks into local Room
+                        apiTasks.forEach { repo.insertIfNotExists(it) }
+
+                        // 3️⃣ Load full merged list (offline + synced)
+                        val merged = repo.loadLocal(email)
+                        _tasks.postValue(merged.toMutableList())
+                        return@launch
+                    }
+                } catch (_: Exception) {}
             }
+
+            // OFFLINE fallback
+            val local = repo.loadLocal(email)
+            _tasks.postValue(local.toMutableList())
         }
     }
+
+
 
     /** --- Create new local Task --- **/
     fun newTask(
@@ -272,26 +289,26 @@ class TaskViewModel : ViewModel() {
     }
 
     /** --- Add Task to API and local list --- **/
-    fun addTask(task: com.example.habitflow.data.model.Task) {
+    fun addTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val request = task.toCreateRequest()
-                val response = com.example.habitflow.network.RetrofitInstance.api.addTask(request)
-                if (response.isSuccessful) {
-                    val newTask = response.body()?.toUiTask()
-                    if (newTask != null) {
-                        val current = _tasks.value ?: mutableListOf()
-                        current.add(newTask)
-                        _tasks.postValue(current)
-                    } else {
-                        fetchTasks() // refresh the full list from the API
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+
+            // 1️⃣ Always write to Room
+            repo.addTask(task)
+
+            // 2️⃣ If offline: load from Room and update UI immediately
+            if (!NetworkUtils.isOnline(appContext)) {
+                val email = "guest@habitflow.com"
+                val local = repo.loadLocal(email)
+                _tasks.postValue(local.toMutableList())
+                return@launch
             }
+
+            // 3️⃣ If online: do normal behavior
+            fetchTasks()
         }
     }
+
+
 
     /** --- Update Task on API --- **/
     fun updateTask(task: com.example.habitflow.data.model.Task) {
@@ -319,38 +336,49 @@ class TaskViewModel : ViewModel() {
     }
 
     /** --- Delete Task from API --- **/
-    fun deleteTask(task: com.example.habitflow.data.model.Task) {
+    fun deleteTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val remoteId = task.remoteId ?: return@launch
-                com.example.habitflow.network.RetrofitInstance.api.deleteTask(remoteId)
-                val current = _tasks.value ?: return@launch
-                current.removeAll { it.remoteId == remoteId }
-                _tasks.postValue(current)
-            } catch (e: Exception) {
-                e.printStackTrace()
+
+            // 1️⃣ Always delete local copy
+            repo.deleteLocal(task)
+
+            // 2️⃣ Try delete remote if it exists
+            if (task.remoteId != null && NetworkUtils.isOnline(appContext)) {
+                try {
+                    RetrofitInstance.api.deleteTask(task.remoteId)
+                } catch (_: Exception) {}
             }
+
+            // 3️⃣ Refresh from DB
+            val email = "guest@habitflow.com"
+            val updated = repo.loadLocal(email)
+            _tasks.postValue(updated.toMutableList())
         }
     }
+
 
     /** --- Clear All Tasks --- **/
     fun clearAll() {
         viewModelScope.launch(Dispatchers.IO) {
+
+            // Delete all remote tasks
             try {
                 val current = _tasks.value ?: mutableListOf()
                 for (task in current) {
                     try {
-                        task.remoteId?.let { com.example.habitflow.network.RetrofitInstance.api.deleteTask(it) }
-                    } catch (_: Exception) {
-                        // ignore individual failures and continue
-                    }
+                        task.remoteId?.let { RetrofitInstance.api.deleteTask(it) }
+                    } catch (_: Exception) {}
                 }
-                _tasks.postValue(mutableListOf())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (_: Exception) {}
+
+            // Delete ALL local tasks
+            repo.deleteAllLocal("guest@habitflow.com")
+
+            // Refresh UI
+            _tasks.postValue(mutableListOf())
         }
     }
+
 
     /** --- Coins Logic --- **/
     fun addCoins(amount: Int) {
