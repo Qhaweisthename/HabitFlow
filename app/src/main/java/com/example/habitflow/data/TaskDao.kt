@@ -31,11 +31,10 @@ interface TaskDao {
     @Query("DELETE FROM tasks WHERE userEmail = :email")
     suspend fun deleteAllForUser(email: String)
 
-    // Used to prevent duplicates on sync
     @Query("SELECT * FROM tasks WHERE name = :name AND date = :date LIMIT 1")
     suspend fun findByNameAndDate(name: String, date: String): Task?
 
-    // Used for remote sync lookups
     @Query("SELECT * FROM tasks WHERE remoteId = :remoteId LIMIT 1")
     suspend fun findByRemoteId(remoteId: String): Task?
 }
+

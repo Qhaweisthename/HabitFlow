@@ -1,7 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    // KSP for Room
     id("com.google.devtools.ksp") version "2.0.21-1.0.25"
+
+    // Firebase + Google services
     id("com.google.gms.google-services")
 }
 
@@ -41,7 +45,7 @@ android {
         viewBinding = true
     }
 
-    // 🔥 THIS FIXES YOUR RESOURCE CRASHES
+    // 🔥 Prevents locale crash on Afrikaans devices
     packaging {
         resources {
             excludes += "/values-af/values-af.xml"
@@ -77,14 +81,17 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-    // Firebase (Auth only)
+    // Firebase BOM (choose versions automatically)
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+
+    // Core Firebase you are using
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-    // Biometrics login
+    // Biometric authentication
     implementation("androidx.biometric:biometric:1.1.0")
 
     // Testing

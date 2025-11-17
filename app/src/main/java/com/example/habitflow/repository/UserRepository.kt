@@ -1,6 +1,6 @@
 package com.example.habitflow.repository
 
-import com.example.habitflow.data.User
+import com.example.habitflow.data.model.User
 import com.example.habitflow.data.UserDao
 
 class UserRepository(private val userDao: UserDao) {

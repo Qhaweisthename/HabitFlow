@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.habitflow.MainActivity
 import com.example.habitflow.data.AppDatabase
-import com.example.habitflow.data.User
+import com.example.habitflow.data.model.User
 import com.example.habitflow.databinding.ActivityLoginBinding
 import com.example.habitflow.repository.UserRepository
 import com.example.habitflow.util.SessionManager
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ✅ Initialize Room database properly
+        // Room
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
@@ -62,45 +62,36 @@ class LoginActivity : AppCompatActivity() {
         repository = UserRepository(db.userDao())
         sessionManager = SessionManager(this)
 
-        // ✅ Initialize Firebase Auth
+        // Firebase Auth
         auth = FirebaseAuth.getInstance()
         setupGoogleSignIn()
 
-        // ✅ If Firebase already has a user (from previous Google login),
-        //     but SessionManager has no email yet, sync them.
+        // Reconnect Firebase user if needed
         val firebaseUser = auth.currentUser
         if (firebaseUser != null && sessionManager.getUserSession().isNullOrEmpty()) {
             firebaseUser.email?.let { email ->
-                Log.d(TAG, "Syncing Firebase user into SessionManager: $email")
+                Log.d(TAG, "Auto sync Firebase → Session: $email")
                 sessionManager.saveUserSession(email)
                 sessionManager.setBiometricEnabled(true)
             }
         }
 
-        // ✅ Setup biometrics (if device supports)
         setupBiometrics()
 
-        // ✅ Email/password login (Room)
+        // EMAIL + PASSWORD LOGIN
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
             when {
-                email.isEmpty() || password.isEmpty() -> {
-                    showToast("Please fill in all fields")
-                }
-                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                    showToast("Enter a valid email address")
-                }
-                password.length < 6 -> {
-                    showToast("Password must be at least 6 characters")
-                }
+                email.isEmpty() || password.isEmpty() -> showToast("Please fill all fields")
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> showToast("Invalid email format")
+                password.length < 6 -> showToast("Password must be at least 6 characters")
                 else -> {
                     lifecycleScope.launch {
                         val user = repository.login(email, password)
                         runOnUiThread {
                             if (user != null) {
-                                // Save session + enable biometrics by default
                                 sessionManager.saveUserSession(email)
                                 sessionManager.setBiometricEnabled(true)
                                 goToMain()
@@ -113,54 +104,38 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Google SSO button
+        // GOOGLE SIGN IN BUTTON
         binding.btnGoogleSignIn.setOnClickListener {
             startActivityForResult(googleSignInClient.signInIntent, RC_GOOGLE_SIGN_IN)
         }
 
-        // ✅ Biometric unlock button (user explicitly opts in by tapping this)
+        // BIOMETRIC LOGIN
         binding.btnBiometricLogin.setOnClickListener {
-            val existingSession = sessionManager.getUserSession()
-            val currentFirebaseUser = auth.currentUser
+            val hasHistory = sessionManager.getUserSession()?.isNotEmpty() == true
+                    || auth.currentUser != null
 
-            Log.d(
-                TAG,
-                "Biometric click - session=$existingSession, firebaseUser=${currentFirebaseUser?.email}"
-            )
-
-            // We allow biometrics if there is EITHER a session OR a Firebase user
-            val hasAnyLoginHistory = !existingSession.isNullOrEmpty() || currentFirebaseUser != null
-
-            if (!hasAnyLoginHistory) {
-                showToast("Login once with email or Google before using biometrics.")
+            if (!hasHistory) {
+                showToast("Login once before using biometrics")
             } else if (sessionManager.isBiometricEnabled()) {
-                promptInfo?.let { info ->
-                    biometricPrompt?.authenticate(info)
-                } ?: showToast("Biometric not available.")
+                promptInfo?.let { biometricPrompt?.authenticate(it) }
             } else {
-                showToast("Biometric login not enabled.")
+                showToast("Biometric login not enabled")
             }
         }
 
-        // ✅ Redirect to Register
+        // GO REGISTER
         binding.tvRegisterRedirect.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Google Sign-In + Firebase
-    // ─────────────────────────────────────────────────────────────────────────────
-
+    // GOOGLE SIGN-IN
     private fun setupGoogleSignIn() {
-        @Suppress("DEPRECATION") // ok for now
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            // ✅ default_web_client_id is generated by google-services.json
             .requestIdToken(getString(com.example.habitflow.R.string.default_web_client_id))
             .requestEmail()
             .build()
 
-        @Suppress("DEPRECATION")
         googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
@@ -170,72 +145,48 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)
-                if (account != null) {
-                    handleGoogleAccount(account)
-                } else {
-                    showToast("Google sign-in failed.")
-                }
+                task.getResult(ApiException::class.java)?.let {
+                    handleGoogleAccount(it)
+                } ?: showToast("Google Sign-in failed")
             } catch (e: ApiException) {
-                showToast("Google sign-in error: ${e.message}")
+                showToast("Google Error: ${e.message}")
             }
         }
     }
 
     private fun handleGoogleAccount(account: GoogleSignInAccount) {
-        val idToken = account.idToken
-        if (idToken == null) {
-            showToast("No ID token from Google.")
-            return
-        }
+        val idToken = account.idToken ?: return showToast("No token returned")
 
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val firebaseUser = auth.currentUser
-                    val email = firebaseUser?.email
-                    val displayName = firebaseUser?.displayName ?: "HabitFlow User"
-                    val photoUri = firebaseUser?.photoUrl?.toString()
+        auth.signInWithCredential(credential).addOnCompleteListener { task ->
+            if (!task.isSuccessful) return@addOnCompleteListener showToast("Auth failed")
 
-                    if (email == null) {
-                        showToast("No email returned from Google account.")
-                        return@addOnCompleteListener
-                    }
+            val user = auth.currentUser
+            val email = user?.email ?: return@addOnCompleteListener
 
-                    lifecycleScope.launch {
-                        // Link Firebase user to local Room user
-                        var localUser = repository.getUserByEmail(email)
-                        if (localUser == null) {
-                            localUser = User(
-                                id = 0,
-                                name = displayName,
-                                email = email,
-                                password = "", // no local password for Google users
-                                photoUri = photoUri,
-                                coins = 100
-                            )
-                            repository.register(localUser)
-                        }
-
-                        // ✅ Save session + enable biometrics
-                        sessionManager.saveUserSession(email)
-                        sessionManager.setBiometricEnabled(true)
-
-                        runOnUiThread {
-                            goToMain()
-                        }
-                    }
-                } else {
-                    showToast("Firebase authentication with Google failed.")
+            lifecycleScope.launch {
+                var localUser = repository.getUserByEmail(email)
+                if (localUser == null) {
+                    localUser = User(
+                        id = 0,
+                        name = user.displayName ?: "HabitFlow User",
+                        email = email,
+                        password = "",
+                        photoUri = user.photoUrl?.toString(),
+                        coins = 100
+                    )
+                    repository.register(localUser)
                 }
+
+                sessionManager.saveUserSession(email)
+                sessionManager.setBiometricEnabled(true)
+
+                runOnUiThread { goToMain() }
             }
+        }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Biometrics
-    // ─────────────────────────────────────────────────────────────────────────────
-
+    // BIOMETRICS
     private fun setupBiometrics() {
         val biometricManager = BiometricManager.from(this)
         val canAuth = biometricManager.canAuthenticate(
@@ -244,7 +195,6 @@ class LoginActivity : AppCompatActivity() {
         )
 
         if (canAuth != BiometricManager.BIOMETRIC_SUCCESS) {
-            // Device doesn't support biometrics or not enrolled
             binding.btnBiometricLogin.isEnabled = false
             return
         }
@@ -253,49 +203,34 @@ class LoginActivity : AppCompatActivity() {
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
                     goToMain()
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    // ✅ Treat user dismiss / back as "no-op", not an error
-                    when (errorCode) {
-                        BiometricPrompt.ERROR_USER_CANCELED,
-                        BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                        BiometricPrompt.ERROR_CANCELED -> {
-                            // user just backed out / tapped outside – stay on login screen, no toast
-                            return
-                        }
-                        else -> {
-                            showToast("Biometric error: $errString")
-                        }
+                    if (errorCode !in listOf(
+                            BiometricPrompt.ERROR_USER_CANCELED,
+                            BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                            BiometricPrompt.ERROR_CANCELED
+                        )
+                    ) {
+                        showToast("Biometric error: $errString")
                     }
                 }
 
                 override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    // Optional: you can remove this toast if it feels spammy
-                    showToast("Biometric authentication failed. Try again.")
+                    showToast("Try again")
                 }
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Unlock HabitFlow")
-            .setSubtitle("Use your fingerprint or device credential")
+            .setSubtitle("Use fingerprint or device PIN")
             .setAllowedAuthenticators(
                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
                         BiometricManager.Authenticators.DEVICE_CREDENTIAL
             )
             .build()
-
-        // ❌ Removed the auto-prompt here so user isn't forced into biometrics on open.
-        //    They only see the dialog after tapping the biometric button.
     }
-
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ─────────────────────────────────────────────────────────────────────────────
 
     private fun goToMain() {
         showToast("Login successful!")

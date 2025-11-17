@@ -4,7 +4,7 @@
 
     <string name="app_name">HabitFlow</string>
 
-    <!-- Old demo stuff / navigation helper -->
+    <!-- Navigation helper -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -18,24 +18,14 @@
     <string name="calendar">Calendar</string>
     <string name="settings">Settings</string>
 
-    <!-- Floating action button -->
+    <!-- FAB -->
     <string name="fab_desc">Add new task</string>
-
-    <!-- Old lorem ipsum sample text (kept if other parts use it) -->
-    <string name="lorem_ipsum">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
-        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
-        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
-        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
-        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
-        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.
-    </string>
 
     <!-- Accessibility -->
     <string name="content_desc_profile_picture">Profile picture</string>
     <string name="content_desc_edit_profile">Edit profile</string>
 
-    <!-- Section titles in Settings -->
+    <!-- Section titles -->
     <string name="section_profile">Profile</string>
     <string name="section_skills">Skills</string>
     <string name="section_privacy">Privacy</string>
@@ -60,7 +50,7 @@
     <string name="row_notifications">Notifications</string>
     <string name="row_privacy_policy">Privacy Policy</string>
 
-    <!-- Logout and language -->
+    <!-- Logout + Language -->
     <string name="logout">Logout</string>
     <string name="label_language">App language</string>
     <string name="lang_english">English</string>
@@ -73,7 +63,7 @@
         Change your profile, skills, privacy settings and app language here.
     </string>
 
-    <!-- Level formatting -->
+    <!-- Level -->
     <string name="level_format">Level: %1$d</string>
     <string name="level_sample">Level: 2</string>
 

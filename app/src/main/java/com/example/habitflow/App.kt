@@ -11,7 +11,7 @@ import com.example.habitflow.util.LocaleManager
 class App : Application() {
 
     override fun attachBaseContext(base: Context) {
-        // Wrap the app with the saved language preference
+        // Wrap context with saved language
         super.attachBaseContext(LocaleManager.wrapContext(base))
     }
 
@@ -19,15 +19,15 @@ class App : Application() {
         super.onCreate()
         instance = this
 
-        // Apply locale on app start
+        // Apply locale at startup
         LocaleManager.wrapContext(this)
 
-        // Track app foreground/background usage
+        // Track foreground/background app usage
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
                 when (event) {
-                    Lifecycle.Event.ON_START -> AppUsageTracker.onResume(this) // app to foreground
-                    Lifecycle.Event.ON_STOP  -> AppUsageTracker.onPause(this)  // app to background
+                    Lifecycle.Event.ON_START -> AppUsageTracker.onResume(this) // app enters foreground
+                    Lifecycle.Event.ON_STOP  -> AppUsageTracker.onPause(this)  // app goes background
                     else -> Unit
                 }
             }

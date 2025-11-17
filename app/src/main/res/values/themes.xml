@@ -2,26 +2,33 @@
 
     <!-- Base app theme -->
     <style name="Base.Theme.HabitFlow" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Plain background -->
+        <!-- Plain white background -->
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 
-    <!-- Row button style used in fragment_settings.xml -->
+    <!-- Settings Row Button -->
     <style name="Widget.Settings.RowButton" parent="Widget.Material3.Button.TextButton">
-        <!-- ✅ Give the button a width & height -->
+        <!-- Proper size -->
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
 
-        <item name="android:insetRight">16dp</item>
+        <!-- Padding -->
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
         <item name="android:paddingStart">40dp</item>
+        <item name="android:insetRight">16dp</item>
+
+        <!-- Text style -->
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@android:color/black</item>
 
-        <!-- Keep background transparent so the card colour shows -->
+        <!-- Transparent so card shows through -->
         <item name="backgroundTint">@android:color/transparent</item>
+
+        <!-- Ripple effect -->
         <item name="rippleColor">@android:color/white</item>
+
+        <!-- Align text left, vertically centered -->
         <item name="android:gravity">start|center_vertical</item>
     </style>
 

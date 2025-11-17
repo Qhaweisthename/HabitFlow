@@ -7,6 +7,7 @@ import com.example.habitflow.data.AppDatabase
 import com.example.habitflow.data.model.Task
 import com.example.habitflow.network.ApiService
 import com.example.habitflow.ui.tasks.CreateTaskRequest
+import com.example.habitflow.ui.tasks.UpdateTaskRequest
 import com.example.habitflow.util.NetworkUtils
 
 class TaskRepository(
@@ -17,14 +18,13 @@ class TaskRepository(
     private val taskDao = AppDatabase.getInstance(context).taskDao()
     private val appContext = context.applicationContext
 
+    // ------------------------------
+    // LOAD
+    // ------------------------------
 
-    suspend fun deleteAllLocal(email: String) {
-        taskDao.deleteAllForUser(email)
+    suspend fun loadLocal(email: String): List<Task> {
+        return taskDao.getTasksForUser(email)
     }
-    suspend fun deleteLocal(task: Task) {
-        taskDao.deleteTask(task)
-    }
-
 
     suspend fun insertIfNotExists(task: Task) {
         val existing =
@@ -38,23 +38,19 @@ class TaskRepository(
         }
     }
 
-
-
-
-
-
+    // ------------------------------
+    // ADD
+    // ------------------------------
 
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     suspend fun addTask(task: Task) {
 
-        // skip duplicates
-        val existing = task.remoteId?.let { taskDao.findByRemoteId(it) }
-        if (existing != null) return
+        // prevent duplicates
+        val exists = task.remoteId?.let { taskDao.findByRemoteId(it) }
+        if (exists != null) return
 
-        // insert
         val localId = taskDao.insertTask(task).toInt()
 
-        // upload if online
         if (NetworkUtils.isOnline(appContext)) {
             try {
                 val response = api.addTask(
@@ -66,12 +62,53 @@ class TaskRepository(
                 )
 
                 if (response.isSuccessful && response.body() != null) {
-                    val remote = response.body()!!
-                    taskDao.markAsSynced(localId, remote._id!!)
+                    taskDao.markAsSynced(localId, response.body()!!._id!!)
                 }
             } catch (_: Exception) {}
         }
     }
+
+    // ------------------------------
+    // UPDATE
+    // ------------------------------
+
+    suspend fun updateTask(task: Task) {
+        taskDao.updateTask(task)
+
+        if (NetworkUtils.isOnline(appContext)) {
+            try {
+                task.remoteId?.let {
+                    api.updateTask(it, UpdateTaskRequest(task.name, task.isDone, task.date))
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    // ------------------------------
+    // DELETE
+    // ------------------------------
+
+    suspend fun deleteTask(task: Task) {
+        taskDao.deleteTask(task)
+
+        if (NetworkUtils.isOnline(appContext)) {
+            try {
+                task.remoteId?.let { api.deleteTask(it) }
+            } catch (_: Exception) {}
+        }
+    }
+
+    // ------------------------------
+    // CLEAR ALL
+    // ------------------------------
+
+    suspend fun clearAll(email: String) {
+        taskDao.deleteAllForUser(email)
+    }
+
+    // ------------------------------
+    // SYNC
+    // ------------------------------
 
     suspend fun syncPending() {
         if (!NetworkUtils.isOnline(appContext)) return
@@ -81,23 +118,13 @@ class TaskRepository(
         for (task in unsynced) {
             try {
                 val response = api.addTask(
-                    CreateTaskRequest(
-                        name = task.name,
-                        isDone = task.isDone,
-                        date = task.date
-                    )
+                    CreateTaskRequest(task.name, task.isDone, task.date)
                 )
 
                 if (response.isSuccessful && response.body() != null) {
-                    val remote = response.body()!!
-                    taskDao.markAsSynced(task.id, remote._id!!)
+                    taskDao.markAsSynced(task.id, response.body()!!._id!!)
                 }
             } catch (_: Exception) {}
         }
     }
-
-    suspend fun loadLocal(email: String): List<Task> {
-        return taskDao.getTasksForUser(email)
-    }
 }
-

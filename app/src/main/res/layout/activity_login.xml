@@ -135,7 +135,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Redirect -->
+    <!-- Redirect to Register -->
     <TextView
         android:id="@+id/tvRegisterRedirect"
         android:layout_width="wrap_content"

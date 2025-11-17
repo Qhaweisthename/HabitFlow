@@ -5,10 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/tasksFragment">
 
-    <!-- ========================= -->
-    <!-- MAIN TABS (Bottom Navigation) -->
-    <!-- ========================= -->
-
+    <!-- MAIN BOTTOM NAV DESTINATIONS -->
     <fragment
         android:id="@+id/tasksFragment"
         android:name="com.example.habitflow.ui.tasks.TasksFragment"
@@ -40,9 +37,7 @@
         tools:layout="@layout/fragment_settings" />
 
 
-    <!-- ========================= -->
     <!-- SETTINGS SUB PAGES -->
-    <!-- ========================= -->
 
     <fragment
         android:id="@+id/customizeAvatarFragment"
@@ -93,9 +88,7 @@
         tools:layout="@layout/fragment_stats" />
 
 
-    <!-- ========================= -->
-    <!-- PRIVACY SUB PAGES -->
-    <!-- ========================= -->
+    <!-- PRIVACY SETTINGS PAGES -->
 
     <fragment
         android:id="@+id/personalInfoFragment"
