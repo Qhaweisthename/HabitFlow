@@ -28,6 +28,9 @@ import com.example.habitflow.util.SessionManager
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
+
 
 class SettingsFragment : Fragment() {
 
@@ -242,7 +245,18 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         bindUserHeader()
         setupClicks()
+
+        // 🔔 TEMP: log FCM token once for debugging
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("FCM", "Manual token: $token")
+        }
     }
+
 
     private fun bindUserHeader() {
         // Level label

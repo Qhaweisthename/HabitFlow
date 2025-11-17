@@ -1,10 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    // ✅ Match your Kotlin version 2.0.21
+    // KSP for Room
     id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
-
 android {
     namespace = "com.example.habitflow"
     compileSdk = 36   // ✅ required by androidx.core:1.17.0 and activity-ktx:1.10.1
@@ -72,4 +71,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Firebase Cloud Messaging (using BOM)
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+
 }
+apply(plugin = "com.google.gms.google-services")
