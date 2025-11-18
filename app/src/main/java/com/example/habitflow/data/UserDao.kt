@@ -3,7 +3,6 @@ package com.example.habitflow.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.habitflow.data.model.User
 
 @Dao
 interface UserDao {

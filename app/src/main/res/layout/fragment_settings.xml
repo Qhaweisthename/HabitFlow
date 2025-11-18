@@ -80,57 +80,90 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 🔹 LANGUAGE HEADER -->
-        <TextView
-            android:id="@+id/labelLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="24dp"
-            android:paddingBottom="8dp"
-            android:text="@string/label_language"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="@color/text_dark" />
+        <!-- Profile Section -->
+<!--        <TextView-->
+<!--            android:id="@+id/labelProfile"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:paddingTop="24dp"-->
+<!--            android:paddingBottom="8dp"-->
+<!--            android:text="@string/section_profile"-->
+<!--            android:textAppearance="?attr/textAppearanceTitleMedium"-->
+<!--            android:textColor="@color/text_dark" />-->
 
-        <!-- Language Button -->
-        <Button
-            android:id="@+id/btnLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_language"
-            android:backgroundTint="@color/section_purple"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="8dp" />
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            android:id="@+id/profileSectionCard"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:cardBackgroundColor="@color/section_purple"-->
+<!--            app:cardCornerRadius="16dp"-->
+<!--            app:cardElevation="0dp">-->
 
-        <!-- Language Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/section_purple"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/btnCustomizeAvatar"-->
+<!--                    style="@style/Widget.Settings.RowButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/row_customize_avatar" />-->
 
-                <Spinner
-                    android:id="@+id/spinnerLanguage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+<!--                <com.google.android.material.divider.MaterialDivider-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="2dp"-->
+<!--                    android:layout_marginLeft="40dp"-->
+<!--                    app:dividerColor="@color/divider_purple" />-->
 
-                <TextView
-                    android:id="@+id/tvSettingsInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/settings_info"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="@color/text_dark" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/btnEquipment"-->
+<!--                    style="@style/Widget.Settings.RowButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/row_equipment" />-->
+
+<!--                <com.google.android.material.divider.MaterialDivider-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="2dp"-->
+<!--                    android:layout_marginLeft="40dp"-->
+<!--                    app:dividerColor="@color/divider_purple" />-->
+
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/btnItems"-->
+<!--                    style="@style/Widget.Settings.RowButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/row_items" />-->
+
+<!--                <com.google.android.material.divider.MaterialDivider-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="2dp"-->
+<!--                    android:layout_marginLeft="40dp"-->
+<!--                    app:dividerColor="@color/divider_purple" />-->
+
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/btnPetsMounts"-->
+<!--                    style="@style/Widget.Settings.RowButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/row_pets_mounts" />-->
+
+<!--                <com.google.android.material.divider.MaterialDivider-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="2dp"-->
+<!--                    android:layout_marginLeft="40dp"-->
+<!--                    app:dividerColor="@color/divider_purple" />-->
+
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/btnUpgradePremium"-->
+<!--                    style="@style/Widget.Settings.RowButton"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/row_upgrade" />-->
+<!--            </LinearLayout>-->
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
         <!-- Skills Section -->
         <TextView

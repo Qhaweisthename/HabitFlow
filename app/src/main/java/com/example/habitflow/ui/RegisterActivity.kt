@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.habitflow.data.AppDatabase
-import com.example.habitflow.data.model.User
+import com.example.habitflow.data.User
 import com.example.habitflow.databinding.ActivityRegisterBinding
 import com.example.habitflow.repository.UserRepository
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Room DB
+        // ✅ Initialize Room database
         val db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
@@ -34,12 +34,13 @@ class RegisterActivity : AppCompatActivity() {
 
         repository = UserRepository(db.userDao())
 
+        // ✅ Register button click
         binding.btnRegister.setOnClickListener {
             val name = binding.etName.text.toString().trim()
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            // Validation
+            // 🔹 Input validation
             when {
                 name.isEmpty() || email.isEmpty() || password.isEmpty() -> {
                     showToast("Please fill in all fields")
@@ -65,12 +66,10 @@ class RegisterActivity : AppCompatActivity() {
                                 id = 0,
                                 name = name,
                                 email = email,
-                                password = password,
-                                coins = 100 // optional starter coins
+                                password = password
                             )
 
                             repository.register(newUser)
-
                             runOnUiThread {
                                 showToast("Registration successful!")
                                 startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
@@ -82,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        // Go to Login
+        // ✅ Redirect to Login
         binding.tvLoginRedirect.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()

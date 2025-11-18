@@ -1,7 +1,6 @@
 package com.example.habitflow
 
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
@@ -11,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.NavOptions
 import androidx.navigation.ui.setupWithNavController
 import com.example.habitflow.data.model.Task
 import com.example.habitflow.ui.LoginActivity
 import com.example.habitflow.ui.tasks.TaskViewModel
-import com.example.habitflow.util.LocaleManager
 import com.example.habitflow.util.SessionManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,45 +27,58 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var sessionManager: SessionManager
 
-    /** Apply saved language before anything else loads */
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleManager.wrapContext(newBase))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Session check
+        // ✅ Initialize session and check login
         sessionManager = SessionManager(this)
         val userSession = sessionManager.getUserSession()
+
         if (userSession.isNullOrEmpty()) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
             return
         }
 
+        // ✅ Load main layout
         setContentView(R.layout.activity_main)
 
-        // Navigation setup
+        // ✅ Setup top bar and bottom nav
+        val topBar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+
+        // ✅ Setup Navigation
         val host = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         navController = host.navController
-
-        // Bottom Nav
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         bottomNav.setupWithNavController(navController)
 
-        // Top App Bar
-        val topBar = findViewById<MaterialToolbar>(R.id.topAppBar)
-
-        // Set toolbar title dynamically
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            topBar.title = destination.label
+        // Force navigation to the selected top-level destination from anywhere
+        bottomNav.setOnItemSelectedListener { item ->
+            val options = NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setRestoreState(true)
+                .setPopUpTo(navController.graph.startDestinationId, false, saveState = true)
+                .build()
+            return@setOnItemSelectedListener try {
+                navController.navigate(item.itemId, null, options)
+                true
+            } catch (_: IllegalArgumentException) {
+                false
+            }
         }
 
-        // Inflate logout menu
+        // If reselected, pop back to that destination (clears nested stack under it)
+        bottomNav.setOnItemReselectedListener { menuItem ->
+            navController.popBackStack(menuItem.itemId, false)
+        }
+
+        // ✅ Display Welcome Text
+        //topBar.title = "Welcome, ${userSession ?: "User"}"
+
+        // ✅ Inflate Logout Menu
         topBar.inflateMenu(R.menu.menu_top_appbar)
 
-        // Logout click listener
+        // ✅ Handle Logout Menu Click
         topBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_logout -> {
@@ -78,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** Task dialog (optional but kept) */
+    // ✅ Task Dialog (still available if needed)
     private fun showAddTaskDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_task, null)
         val etTaskName = dialogView.findViewById<EditText>(R.id.etTaskName)
@@ -92,9 +104,9 @@ class MainActivity : AppCompatActivity() {
             val datePicker = DatePickerDialog(
                 this,
                 { _, year, month, dayOfMonth ->
-                    val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
                     calendar.set(year, month, dayOfMonth)
-                    pickedDate = sdf.format(calendar.time)
+                    pickedDate = format.format(calendar.time)
                     tvPickedDate.text = pickedDate
                 },
                 calendar.get(Calendar.YEAR),
@@ -118,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    /** Logout confirmation */
+    // ✅ Logout Confirmation Dialog
     fun showLogoutConfirmation() {
         AlertDialog.Builder(this)
             .setTitle("Logout")
@@ -133,4 +145,5 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
 }

@@ -2,25 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Network permissions -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <!-- Android 13+ notifications permission -->
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="33" />
-
-    <!-- Location permissions -->
+    <!-- Foreground location permissions -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- Biometric (fallbacks included for older devices) -->
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-
     <application
-        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,9 +19,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HabitFlow">
+        android:theme="@style/Theme.HabitFlow"
+        android:name=".App">
 
-        <!-- 🟢 MainActivity launcher -->
+        <!-- 🟢 MainActivity is now the launcher -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -53,23 +45,23 @@
             android:exported="false"
             android:theme="@style/Theme.HabitFlow" />
 
-        <!-- Other existing activities -->
+
+
+        <!-- Other existing sections -->
         <activity
             android:name=".SectionListProfile"
             android:exported="false"
             android:theme="@style/Theme.HabitFlow" />
-
         <activity
             android:name=".ItemCalendarSlot"
             android:exported="false"
             android:theme="@style/Theme.HabitFlow" />
-
         <activity
             android:name=".ui.item.ItemTaskActivity"
             android:exported="false"
             android:theme="@style/Theme.HabitFlow" />
 
-        <!-- Firebase Messaging Service -->
+        <!--Firebase Messaging Service -->
         <service
             android:name=".util.PushNotificationService"
             android:exported="false">
@@ -77,6 +69,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
 
     </application>
 

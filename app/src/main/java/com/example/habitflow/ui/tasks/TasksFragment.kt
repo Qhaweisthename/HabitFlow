@@ -2,33 +2,37 @@ package com.example.habitflow.ui.tasks
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.example.habitflow.R
 import com.example.habitflow.achievements.AchievementsRewards
 import com.example.habitflow.achievements.AchievementsStore
 import com.example.habitflow.data.AppDatabase
-import com.example.habitflow.data.model.Task
 import com.example.habitflow.databinding.FragmentTasksBinding
-import com.example.habitflow.network.RetrofitInstance
-import com.example.habitflow.repository.TaskRepository
 import com.example.habitflow.ui.tasks.adapter.TaskAdapter
-import com.example.habitflow.util.NetworkUtils
 import com.example.habitflow.util.SessionManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 class TasksFragment : Fragment() {
-
     private var _binding: FragmentTasksBinding? = null
     private val binding get() = _binding!!
 
@@ -36,7 +40,8 @@ class TasksFragment : Fragment() {
     private lateinit var viewModel: TaskViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[TaskViewModel::class.java]
@@ -44,8 +49,12 @@ class TasksFragment : Fragment() {
         taskAdapter = TaskAdapter(
             mutableListOf(),
             onTaskChecked = { task ->
+                // 🔹 Record completion + grant achievement coin rewards (only when marking as done)
                 if (task.isDone) {
+                    // Count toward totals / week / streak
                     AchievementsStore.onTaskCompleted(requireContext())
+
+                    // Credit any newly unlocked achievements and add coins via ViewModel
                     val unlocked = AchievementsRewards.processUnlocks(requireContext()) { bonusCoins ->
                         viewModel.addCoins(bonusCoins)
                     }
@@ -58,12 +67,12 @@ class TasksFragment : Fragment() {
                         ).show()
                     }
                 }
+
+                // 🔹 Persist task change and refresh bars
                 viewModel.updateTask(task)
                 updateExperienceBar()
             },
-            onTaskDeleted = { task ->
-                viewModel.deleteTask(task)
-            }
+            onTaskDeleted = { task -> viewModel.deleteTask(task) }
         )
 
         try {
@@ -76,21 +85,29 @@ class TasksFragment : Fragment() {
         binding.rvTasks.adapter = taskAdapter
 
         viewModel.tasks.observe(viewLifecycleOwner) { tasks ->
-            taskAdapter.updateTasks(tasks)
-            updateProgressBars(tasks)
+            if (tasks != null) {
+                taskAdapter.updateTasks(tasks)
+                updateProgressBars(tasks)
+            }
         }
 
-        // Coins sync with DB
+        // Initialize coins from DB and keep DB in sync with LiveData
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val email = SessionManager(requireContext()).getUserSession()
             if (!email.isNullOrEmpty()) {
-                val db = AppDatabase.getInstance(requireContext())
+                val db = Room.databaseBuilder(
+                    requireContext().applicationContext,
+                    AppDatabase::class.java,
+                    "habitflow_db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+
                 val dbCoins = db.userDao().getCoins(email) ?: 100
                 val current = viewModel.coins.value ?: 0
                 val delta = dbCoins - current
                 if (delta != 0) {
-                    if (delta > 0) viewModel.addCoins(delta)
-                    else viewModel.removeCoins(-delta)
+                    if (delta > 0) viewModel.addCoins(delta) else viewModel.removeCoins(-delta)
                 }
 
                 withContext(Dispatchers.Main) {
@@ -114,24 +131,24 @@ class TasksFragment : Fragment() {
         val etTaskName = dialogView.findViewById<EditText>(R.id.etTaskName)
         val tvPickedDate = dialogView.findViewById<TextView>(R.id.tvPickedDate)
 
-        var pickedDate = Task.getTodayDate()
+        var pickedDate = com.example.habitflow.data.model.Task.getTodayDate() // default today
         tvPickedDate.text = pickedDate
 
         tvPickedDate.setOnClickListener {
             val calendar = Calendar.getInstance()
-            val dp = DatePickerDialog(
+            val datePicker = DatePickerDialog(
                 requireContext(),
-                { _, year, month, day ->
-                    calendar.set(year, month, day)
-                    pickedDate = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                        .format(calendar.time)
+                { _, year, month, dayOfMonth ->
+                    val format = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                    calendar.set(year, month, dayOfMonth)
+                    pickedDate = format.format(calendar.time)
                     tvPickedDate.text = pickedDate
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
             )
-            dp.show()
+            datePicker.show()
         }
 
         AlertDialog.Builder(requireContext())
@@ -147,7 +164,13 @@ class TasksFragment : Fragment() {
             .show()
     }
 
-    private fun updateProgressBars(tasks: List<Task>) {
+    fun addTask(name: String) {
+        if (name.isNotBlank()) {
+            viewModel.addTask(viewModel.newTask(name))
+        }
+    }
+
+    private fun updateProgressBars(tasks: List<com.example.habitflow.data.model.Task>) {
         if (tasks.isEmpty()) {
             updateExperienceBar()
             binding.progressHealth.progress = 0
@@ -155,9 +178,10 @@ class TasksFragment : Fragment() {
             return
         }
 
-        val done = tasks.count { it.isDone }
-        val ratio = done.toFloat() / tasks.size
+        val completed = tasks.count { it.isDone }
+        val ratio = completed.toFloat() / tasks.size
 
+        // Experience reflects current XP in the active level (0..100)
         updateExperienceBar()
         binding.progressHealth.progress = (ratio * 80).toInt()
         binding.progressMana.progress = (ratio * 60).toInt()
@@ -165,10 +189,7 @@ class TasksFragment : Fragment() {
 
     private fun updateExperienceBar() {
         val progress = com.example.habitflow.ui.progress.PlayerProgress.get(requireContext())
-        val xp = progress.xp.coerceIn(
-            0,
-            com.example.habitflow.ui.progress.PlayerProgress.XP_PER_LEVEL
-        )
+        val xp = progress.xp.coerceIn(0, com.example.habitflow.ui.progress.PlayerProgress.XP_PER_LEVEL)
         binding.progressExperience.progress = xp
     }
 
@@ -178,9 +199,7 @@ class TasksFragment : Fragment() {
     }
 }
 
-
-// ------------------ DTOs ------------------
-
+// --- DTOs for Mongo API ---
 data class ApiTask(
     val _id: String?,
     val name: String,
@@ -200,72 +219,50 @@ data class UpdateTaskRequest(
     val date: String
 )
 
-
-// ------------------ VIEWMODEL ------------------
-
 class TaskViewModel : ViewModel() {
-
-    private val appContext = com.example.habitflow.App.instance.applicationContext
-
-    private val repo = TaskRepository(
-        appContext,
-        RetrofitInstance.api
-    )
-
-    private val _tasks = MutableLiveData<MutableList<Task>>(mutableListOf())
-    val tasks: LiveData<MutableList<Task>> get() = _tasks
+    private val _tasks = MutableLiveData<MutableList<com.example.habitflow.data.model.Task>>(mutableListOf())
+    val tasks: LiveData<MutableList<com.example.habitflow.data.model.Task>> get() = _tasks
 
     private val _coins = MutableLiveData(300)
     val coins: LiveData<Int> get() = _coins
 
+    /** --- Fetch tasks from API --- **/
     fun fetchTasks() {
         viewModelScope.launch(Dispatchers.IO) {
-            val email = "guest@habitflow.com"
-
-            if (NetworkUtils.isOnline(appContext)) {
-                try {
-                    val response = RetrofitInstance.api.getTasks()
-                    if (response.isSuccessful && response.body() != null) {
-                        val apiTasks = response.body()!!.map { it.toUiTask() }
-
-                        // Sync pending local tasks
-                        repo.syncPending()
-
-                        // Save remote tasks locally IF not already saved
-                        apiTasks.forEach { repo.insertIfNotExists(it) }
-
-                        // Load all tasks (merged local + remote)
-                        val merged = repo.loadLocal(email)
-
-                        _tasks.postValue(
-                            merged.distinctBy {
-                                it.remoteId ?: (it.name + it.date + it.userEmail)
-                            }.toMutableList()
+            try {
+                println("🟢 Fetching tasks from API...")
+                val response = com.example.habitflow.network.RetrofitInstance.api.getTasks()
+                if (response.isSuccessful) {
+                    val apiTasks = response.body() ?: emptyList<ApiTask>()
+                    println("✅ Received ${apiTasks.size} tasks from API.")
+                    val mapped = apiTasks.map { it.toUiTask() }.toMutableList()
+                    _tasks.postValue(mapped)
+                } else {
+                    println("⚠️ API Error: ${response.code()} - ${response.message()}")
+                }
+            } catch (e: Exception) {
+                println("🚨 Network or conversion error: ${e.message}")
+                _tasks.postValue(
+                    mutableListOf(
+                        com.example.habitflow.data.model.Task(
+                            id = 1,
+                            name = "Sample Task (offline)",
+                            isDone = false,
+                            date = com.example.habitflow.data.model.Task.getTodayDate()
                         )
-
-                        return@launch
-                    }
-                } catch (_: Exception) { }
+                    )
+                )
             }
-
-            // OFFLINE MODE
-            val local = repo.loadLocal(email)
-
-            _tasks.postValue(
-                local.distinctBy {
-                    it.remoteId ?: (it.name + it.date + it.userEmail)
-                }.toMutableList()
-            )
         }
     }
 
-
+    /** --- Create new local Task --- **/
     fun newTask(
         name: String,
-        date: String = Task.getTodayDate(),
+        date: String = com.example.habitflow.data.model.Task.getTodayDate(),
         userEmail: String = "guest@habitflow.com"
-    ): Task {
-        return Task(
+    ): com.example.habitflow.data.model.Task {
+        return com.example.habitflow.data.model.Task(
             id = 0,
             userEmail = userEmail,
             name = name,
@@ -274,41 +271,88 @@ class TaskViewModel : ViewModel() {
         )
     }
 
-    fun addTask(task: Task) {
+    /** --- Add Task to API and local list --- **/
+    fun addTask(task: com.example.habitflow.data.model.Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.addTask(task)
-
-            if (!NetworkUtils.isOnline(appContext)) {
-                val local = repo.loadLocal("guest@habitflow.com")
-                _tasks.postValue(local.toMutableList())
-                return@launch
+            try {
+                val request = task.toCreateRequest()
+                val response = com.example.habitflow.network.RetrofitInstance.api.addTask(request)
+                if (response.isSuccessful) {
+                    val newTask = response.body()?.toUiTask()
+                    if (newTask != null) {
+                        val current = _tasks.value ?: mutableListOf()
+                        current.add(newTask)
+                        _tasks.postValue(current)
+                    } else {
+                        fetchTasks() // refresh the full list from the API
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-
-            fetchTasks()
         }
     }
 
-    fun updateTask(task: Task) {
+    /** --- Update Task on API --- **/
+    fun updateTask(task: com.example.habitflow.data.model.Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.updateTask(task)
-            fetchTasks()
+            try {
+                val remoteId = task.remoteId ?: return@launch
+                val request = task.toUpdateRequest()
+                com.example.habitflow.network.RetrofitInstance.api.updateTask(remoteId, request)
+
+                val current = _tasks.value ?: return@launch
+                val index = current.indexOfFirst { it.remoteId == remoteId }
+                if (index != -1) {
+                    val wasDone = current[index].isDone
+                    current[index] = task
+                    _tasks.postValue(current)
+
+                    // Coins +/- when toggling done/undone
+                    if (!wasDone && task.isDone) addCoins(10)
+                    else if (wasDone && !task.isDone) removeCoins(10)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
-    fun deleteTask(task: Task) {
+    /** --- Delete Task from API --- **/
+    fun deleteTask(task: com.example.habitflow.data.model.Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.deleteTask(task)
-            fetchTasks()
+            try {
+                val remoteId = task.remoteId ?: return@launch
+                com.example.habitflow.network.RetrofitInstance.api.deleteTask(remoteId)
+                val current = _tasks.value ?: return@launch
+                current.removeAll { it.remoteId == remoteId }
+                _tasks.postValue(current)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
+    /** --- Clear All Tasks --- **/
     fun clearAll() {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.clearAll("guest@habitflow.com")
-            _tasks.postValue(mutableListOf())
+            try {
+                val current = _tasks.value ?: mutableListOf()
+                for (task in current) {
+                    try {
+                        task.remoteId?.let { com.example.habitflow.network.RetrofitInstance.api.deleteTask(it) }
+                    } catch (_: Exception) {
+                        // ignore individual failures and continue
+                    }
+                }
+                _tasks.postValue(mutableListOf())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
+    /** --- Coins Logic --- **/
     fun addCoins(amount: Int) {
         _coins.postValue((_coins.value ?: 0) + amount)
     }
@@ -318,21 +362,34 @@ class TaskViewModel : ViewModel() {
     }
 }
 
+/** --- Mapping Extensions (bottom of file) --- **/
 
-// ------------------ MAPPING ------------------
-
-fun ApiTask.toUiTask(): Task =
-    Task(
+// Converts API DTO -> UI model
+fun ApiTask.toUiTask(): com.example.habitflow.data.model.Task {
+    return com.example.habitflow.data.model.Task(
         id = 0,
-        userEmail = "guest@habitflow.com",
+        userEmail = "guest@habitflow.com", // or get from logged-in user
         name = this.name,
         isDone = this.isDone,
         date = this.date,
         remoteId = this._id
     )
+}
 
-fun Task.toCreateRequest(): CreateTaskRequest =
-    CreateTaskRequest(name, isDone, date)
+// Converts UI Task -> Create API Request
+fun com.example.habitflow.data.model.Task.toCreateRequest(): CreateTaskRequest {
+    return CreateTaskRequest(
+        name = this.name,
+        isDone = this.isDone,
+        date = this.date
+    )
+}
 
-fun Task.toUpdateRequest(): UpdateTaskRequest =
-    UpdateTaskRequest(name, isDone, date)
+// Converts UI Task -> Update API Request
+fun com.example.habitflow.data.model.Task.toUpdateRequest(): UpdateTaskRequest {
+    return UpdateTaskRequest(
+        name = this.name,
+        isDone = this.isDone,
+        date = this.date
+    )
+}
