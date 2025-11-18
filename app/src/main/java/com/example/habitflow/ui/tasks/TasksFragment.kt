@@ -228,25 +228,37 @@ class TaskViewModel : ViewModel() {
                     if (response.isSuccessful && response.body() != null) {
                         val apiTasks = response.body()!!.map { it.toUiTask() }
 
-                        // 1️⃣ Sync pending local tasks → API
+                        // Sync pending local tasks
                         repo.syncPending()
 
-                        // 2️⃣ Save remote tasks to local
+                        // Save remote tasks locally IF not already saved
                         apiTasks.forEach { repo.insertIfNotExists(it) }
 
-                        // 3️⃣ Load merged list
+                        // Load all tasks (merged local + remote)
                         val merged = repo.loadLocal(email)
-                        _tasks.postValue(merged.toMutableList())
+
+                        _tasks.postValue(
+                            merged.distinctBy {
+                                it.remoteId ?: (it.name + it.date + it.userEmail)
+                            }.toMutableList()
+                        )
+
                         return@launch
                     }
-                } catch (_: Exception) {}
+                } catch (_: Exception) { }
             }
 
-            // Offline fallback
+            // OFFLINE MODE
             val local = repo.loadLocal(email)
-            _tasks.postValue(local.toMutableList())
+
+            _tasks.postValue(
+                local.distinctBy {
+                    it.remoteId ?: (it.name + it.date + it.userEmail)
+                }.toMutableList()
+            )
         }
     }
+
 
     fun newTask(
         name: String,

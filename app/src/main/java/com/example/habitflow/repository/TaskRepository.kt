@@ -27,15 +27,12 @@ class TaskRepository(
     }
 
     suspend fun insertIfNotExists(task: Task) {
-        val existing =
-            if (task.remoteId != null)
-                taskDao.findByRemoteId(task.remoteId)
-            else
-                taskDao.findByNameAndDate(task.name, task.date)
-
-        if (existing == null) {
-            taskDao.insertTask(task)
+        val existing = when {
+            task.remoteId != null -> taskDao.findByRemoteId(task.remoteId)
+            else -> taskDao.findByNameAndDate(task.name, task.date)
         }
+
+        if (existing != null) return
     }
 
     // ------------------------------
@@ -45,9 +42,14 @@ class TaskRepository(
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     suspend fun addTask(task: Task) {
 
-        // prevent duplicates
-        val exists = task.remoteId?.let { taskDao.findByRemoteId(it) }
+        // Stop dupes BEFORE insert
+        val exists = if (task.remoteId != null)
+            taskDao.findByRemoteId(task.remoteId)
+        else
+            taskDao.findByNameAndDate(task.name, task.date)
+
         if (exists != null) return
+
 
         val localId = taskDao.insertTask(task).toInt()
 
