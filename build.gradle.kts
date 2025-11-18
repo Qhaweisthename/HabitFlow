@@ -1,4 +1,4 @@
-// Root build.gradle.kts
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     repositories {
@@ -6,14 +6,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // 🔔 Google Services Gradle plugin
-        classpath("com.google.gms:google-services:4.4.2")
+        // Google Services Gradle plugin
+        classpath("com.google.gms:google-services:4.4.4")
     }
 }
 
 plugins {
-    // Keep using your version catalog plugins for modules
+    // Version catalog plugin references
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
 }
+
+// Apply Google Services globally (needed for Firebase)
 apply(plugin = "com.google.gms.google-services")
