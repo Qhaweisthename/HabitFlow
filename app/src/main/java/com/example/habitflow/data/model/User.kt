@@ -1,4 +1,4 @@
-package com.example.habitflow.data
+package com.example.habitflow.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

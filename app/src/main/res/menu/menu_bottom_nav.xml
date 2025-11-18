@@ -3,27 +3,27 @@
 
     <item
         android:id="@+id/progressFragment"
-        android:icon="@drawable/progress"
+        android:icon="@drawable/ic_progress_24px"
         android:title="Progress" />
 
     <item
         android:id="@+id/rewardsFragment"
-        android:icon="@drawable/rewards"
+        android:icon="@drawable/ic_rewarded_ads_24px"
         android:title="Rewards" />
 
     <item
         android:id="@+id/tasksFragment"
-        android:icon="@drawable/tasks"
+        android:icon="@drawable/ic_list_alt_check_24px"
         android:title="Tasks" />
 
     <item
         android:id="@+id/calendarFragment"
-        android:icon="@drawable/calendar"
+        android:icon="@drawable/ic_calendar_month_24px"
         android:title="Calendar" />
 
     <item
         android:id="@+id/settingsFragment"
-        android:icon="@drawable/settings"
+        android:icon="@drawable/ic_settings_24px"
         android:title="Settings" />
 
 
