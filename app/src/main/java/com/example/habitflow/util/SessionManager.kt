@@ -37,7 +37,27 @@ class SessionManager(context: Context) {
         return prefs.getBoolean(KEY_BIOMETRIC_ENABLED, false)
     }
 
+    /** Enable / Disable notifications */
+    fun setNotificationsEnabled(enabled: Boolean) {
+        prefs.edit()
+            .putBoolean(KEY_NOTIFICATIONS_ENABLED, enabled)
+            .apply()
+    }
+
+    /** Check if notifications are enabled (default = true) */
+    fun isNotificationsEnabled(): Boolean {
+        return prefs.getBoolean(KEY_NOTIFICATIONS_ENABLED, true)
+    }
+
+    /** Check if user has already made a choice */
+    fun hasChosenNotificationPref(): Boolean {
+        return prefs.contains(KEY_NOTIFICATIONS_ENABLED)
+    }
+
+
     companion object {
+        private const val KEY_NOTIFICATIONS_ENABLED = "notifications_enabled"
+
         private const val PREF_NAME = "habitflow_session"
         private const val KEY_USER_EMAIL = "user_email"
         private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"

@@ -22,6 +22,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.messaging.FirebaseMessaging
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.os.Build
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,26 +54,26 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        // Navigation setup
+        // Ask notification permission only ONCE
+        if (!sessionManager.hasChosenNotificationPref()) {
+            showNotificationPermissionDialog()
+        }
+
+        // Navigation setup (unchanged)
         val host = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
         navController = host.navController
 
-        // Bottom Nav
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         bottomNav.setupWithNavController(navController)
 
-        // Top App Bar
         val topBar = findViewById<MaterialToolbar>(R.id.topAppBar)
 
-        // Set toolbar title dynamically
         navController.addOnDestinationChangedListener { _, destination, _ ->
             topBar.title = destination.label
         }
 
-        // Inflate logout menu
         topBar.inflateMenu(R.menu.menu_top_appbar)
 
-        // Logout click listener
         topBar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_logout -> {
@@ -76,6 +83,42 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        // 🔥 ADD THIS — GET YOUR FCM TOKEN
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            Log.d("FCM", "My FCM Token: $token")
+            //Toast.makeText(this, "FCM Token retrieved!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showNotificationPermissionDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Enable Notifications?")
+            .setMessage("HabitFlow sends helpful reminders for habits, rewards, streaks, and motivation. Would you like to enable them?")
+            .setPositiveButton("Yes") { _, _ ->
+
+                sessionManager.setNotificationsEnabled(true)
+
+                // Only needed for Android 13+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                        101
+                    )
+                }
+            }
+            .setNegativeButton("No") { _, _ ->
+                sessionManager.setNotificationsEnabled(false)
+            }
+            .setCancelable(false)
+            .show()
     }
 
     /** Task dialog (optional but kept) */
@@ -132,5 +175,21 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 101) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notifications enabled 🎉", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Notifications disabled", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
